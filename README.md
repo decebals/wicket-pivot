@@ -17,16 +17,25 @@ Also on aria DATA you can put only fields with Number type.
   
 Use
 -------------------
+
+It's very simple to add a pivot table in your wicket application.
+
     PivotDataSource pivotDataSource = ...;      
     add(new PivotPanel("pivot", pivotDataSource));
   
+First you must create a PivotDataSource and second add the pivot panel in your page.
+   
 Demo
 -------------------
 
-I have a tiny demo application with a demo apache derby embeded database. The demo application is in the demo package.
+I have a tiny demo application with a demo apache derby embeded database. The demo application is in demo package.
 To run de demo application use:  
  
     mvn jetty:run
+
+In the internet browser type http://localhost:8081/
+In demo pivot page put some fields on the areas (for example "REGION", "SALESMAN" on ROW area, "YEAR", "MONTH" 
+on COLUMN area and "SALES" on DATA area) and press "Show pivot" button.
 
 License
 --------------
