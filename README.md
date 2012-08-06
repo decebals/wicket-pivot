@@ -35,7 +35,7 @@ To run de demo application use:
 
 In the internet browser type http://localhost:8081/.
 In demo pivot page put some fields on the areas (for example "REGION", "SALESMAN" on ROW area, "YEAR", "MONTH" 
-on COLUMN area and "SALES" on DATA area) and press "Show pivot" button.
+on COLUMN area and "SALES" on DATA area) and press the "Show pivot" button.
 
 License
 --------------
