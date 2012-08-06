@@ -38,7 +38,7 @@ In the internet browser type http://localhost:8081/.
 In demo pivot page put some fields on the areas (for example "REGION", "SALESMAN" on ROW area, "YEAR", "MONTH" 
 on COLUMN area and "SALES" on DATA area) and press the "Show pivot" button.
 
-You can see a screenshot from demo application in [wiki page] (https://github.com/decebals/wicket-pivot/wiki)
+You can see a screenshot from demo application in [wiki page] (https://github.com/decebals/wicket-pivot/wiki).
 
 License
 --------------
