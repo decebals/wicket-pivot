@@ -58,6 +58,10 @@ public class PivotPanel extends Panel {
 		pivotModel.getField("MONEY").setArea(PivotField.Area.DATA);
 		*/
 
+		// set an aggregator for a data pivot field
+//		pivotModel.getField("MONEY").setAggregator(new Aggregator.Count());
+		
+		// show grand totals
 //		pivotModel.setShowGrandTotalForColumn(true);
 //		pivotModel.setShowGrandTotalForRow(true);
 		

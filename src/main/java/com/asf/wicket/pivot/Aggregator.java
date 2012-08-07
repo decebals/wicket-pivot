@@ -36,7 +36,7 @@ public abstract class Aggregator implements Serializable {
 		return FUNCTIONS;
 	}
 	
-    public static Aggregator getInstance(String function) {
+    public static Aggregator get(String function) {
         if (function.equalsIgnoreCase(SUM)) {
         	return new Sum();
         } else if (function.equalsIgnoreCase(AVG)) {
@@ -78,7 +78,7 @@ public abstract class Aggregator implements Serializable {
 		return false;
 	}
 
-    static class Sum extends Aggregator {
+    public static class Sum extends Aggregator {
     	
         private static final long serialVersionUID = 1L;
         
@@ -108,7 +108,7 @@ public abstract class Aggregator implements Serializable {
         
     }
 
-    static class Average extends Aggregator {
+    public static class Average extends Aggregator {
     	
         private static final long serialVersionUID = 1L;
         
@@ -145,7 +145,7 @@ public abstract class Aggregator implements Serializable {
         
     }
 
-    static class Minimum extends Aggregator {
+    public static class Minimum extends Aggregator {
     	
         private static final long serialVersionUID = 1L;
         
@@ -182,7 +182,7 @@ public abstract class Aggregator implements Serializable {
         
     }
 
-    static class Maximum extends Aggregator {
+    public static class Maximum extends Aggregator {
     	
         private static final long serialVersionUID = 1L;
         
@@ -219,7 +219,7 @@ public abstract class Aggregator implements Serializable {
         
     }
 
-    static class Count extends Aggregator {
+    public static class Count extends Aggregator {
     	
         private static final long serialVersionUID = 1L;
         

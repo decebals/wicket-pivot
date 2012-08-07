@@ -288,11 +288,11 @@ public class PivotAreaPanel extends Panel {
 			aggregator = model.getObject().getAggregator();
 			
 			List<Aggregator> aggregators = new ArrayList<Aggregator>();
-			aggregators.add(Aggregator.getInstance(Aggregator.SUM));
-			aggregators.add(Aggregator.getInstance(Aggregator.AVG));
-			aggregators.add(Aggregator.getInstance(Aggregator.MIN));
-			aggregators.add(Aggregator.getInstance(Aggregator.MAX));
-			aggregators.add(Aggregator.getInstance(Aggregator.COUNT));
+			aggregators.add(Aggregator.get(Aggregator.SUM));
+			aggregators.add(Aggregator.get(Aggregator.AVG));
+			aggregators.add(Aggregator.get(Aggregator.MIN));
+			aggregators.add(Aggregator.get(Aggregator.MAX));
+			aggregators.add(Aggregator.get(Aggregator.COUNT));
 			final DropDownChoice<Aggregator> aggregatorDownChoice = new DropDownChoice<Aggregator>("aggregator", 
 					new PropertyModel<Aggregator>(this, "aggregator"), 
 					aggregators,

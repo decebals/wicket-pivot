@@ -7,15 +7,17 @@ For more information what it's a pivot table see http://en.wikipedia.org/wiki/Pi
 Components
 -------------------
 
-- PivotDataSource is the data source for pivot table (pivot's fields). The data can be featched from a sql ResultSet (see ResultSetPivotDataSource) 
+- PivotDataSource is the data source for pivot table (pivot's fields). The data can be fetched from a sql ResultSet (see ResultSetPivotDataSource) 
 or other non sql sources.
 - PivotModel is the place where I put the pivot configuration, here I can specify what fields are on each area (ROW, COLUMN, DATA)
-and the ordering of these fields on each area. Also, here I can specify if I want a grand total on rows and/or columns.
+and what is their ordering. Also, here I can mention if I want a grand total on rows and/or columns.
 - PivotTable is the component that displays the pivot and it takes a PivotModel object as parameter.
-- PivotField is the object that can be put on a pivot's area. This object has a name and an index. As constrain, on each pivot's area must be minimum one field.
+- PivotField is the object that can be put on a pivot's area. This object has a name and an index. 
+As a constraint, on each pivot's area must be minimum one field.
 Also on aria DATA you can put only fields with Number type. 
+The pivot fields allow several types of aggregations including sum, average, min, max, count. 
   
-Use
+How to use
 -------------------
 
 It's very simple to add a pivot table in your wicket application.
@@ -23,8 +25,29 @@ It's very simple to add a pivot table in your wicket application.
     PivotDataSource pivotDataSource = ...;      
     add(new PivotPanel("pivot", pivotDataSource));
   
-First you must create a PivotDataSource and second add the pivot panel in your page.
-   
+First of all you must create a PivotDataSource and secondly add the pivot panel in your page.
+
+If you want to add programmatically some fields on the pivot areas
+
+    pivotModel.getField("REGION").setArea(PivotField.Area.ROW);
+    pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW);
+    pivotModel.getField("YEAR").setArea(PivotField.Area.COLUMN);
+    pivotModel.getField("MONTH").setArea(PivotField.Area.COLUMN).setAreaIndex(1);
+    pivotModel.getField("MONEY").setArea(PivotField.Area.DATA);
+
+You can specify an aggregator for a data pivot field
+
+    pivotModel.getField("MONEY").setAggregator(Aggregator.get(Aggregator.COUNT));
+    
+    or 
+    
+    pivotModel.getField("MONEY").setAggregator(new Aggregator.Count());
+    
+I you want to disply programmatically a grand total on rows and/or columns
+
+    pivotModel.setShowGrandTotalForColumn(true);
+    pivotModel.setShowGrandTotalForRow(true);
+    
 Demo
 -------------------
 

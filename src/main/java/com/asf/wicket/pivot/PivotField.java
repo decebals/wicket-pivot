@@ -35,7 +35,7 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 		this.name = name;
 		this.index = index;
 		
-		aggregator = Aggregator.getInstance(Aggregator.SUM);
+		aggregator = Aggregator.get(Aggregator.SUM);
 	}
 	
 	public String getName() {
