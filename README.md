@@ -7,12 +7,12 @@ For more information what it's a pivot table see http://en.wikipedia.org/wiki/Pi
 Components
 -------------------
 
-- PivotDataSource is the data source for pivot table (pivot's fields). The data can be fetched from a sql ResultSet (see ResultSetPivotDataSource) 
+- **PivotDataSource** is the data source for pivot table (pivot's fields). The data can be fetched from a sql ResultSet (see ResultSetPivotDataSource) 
 or other non sql sources.
-- PivotModel is the place where I put the pivot configuration, here I can specify what fields are on each area (ROW, COLUMN, DATA)
+- **PivotModel** is the place where I put the pivot configuration, here I can specify what fields are on each area (ROW, COLUMN, DATA)
 and what is their ordering. Also, here I can mention if I want a grand total on rows and/or columns.
-- PivotTable is the component that displays the pivot and it takes a PivotModel object as parameter.
-- PivotField is the object that can be put on a pivot's area. This object has a name and an index. 
+- **PivotTable** is the component that displays the pivot and it takes a PivotModel object as parameter.
+- **PivotField** is the object that can be put on a pivot's area. This object has a name and an index. 
 As a constraint, on each pivot's area must be minimum one field.
 Also on aria DATA you can put only fields with Number type. 
 The pivot fields allow several types of aggregations including sum, average, min, max, count. 
