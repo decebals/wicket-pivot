@@ -27,7 +27,6 @@ import org.apache.wicket.util.collections.MultiMap;
 import com.asf.wicket.pivot.PivotField;
 import com.asf.wicket.pivot.PivotModel;
 import com.asf.wicket.pivot.PivotUtils;
-import com.asf.wicket.pivot.PivotField.Area;
 
 /**
  * @author Decebal Suiu
@@ -39,37 +38,44 @@ public class PivotTable extends Panel {
 	public PivotTable(String id, PivotModel pivotModel) {
 		super(id);
 		
-		List<PivotField> columnFields = pivotModel.getFields(Area.COLUMN);
-		List<PivotField> rowFields = pivotModel.getFields(Area.ROW);
-		List<PivotField> dataFields = pivotModel.getFields(Area.DATA);
+		List<PivotField> columnFields = pivotModel.getFields(PivotField.Area.COLUMN);
+		List<PivotField> rowFields = pivotModel.getFields(PivotField.Area.ROW);
+		List<PivotField> dataFields = pivotModel.getFields(PivotField.Area.DATA);
+		
 		List<List<Object>> rowKeys = pivotModel.getRowKeys();
 		List<List<Object>> columnKeys = pivotModel.getColumnKeys();
 		
+		// rendering header
 		RepeatingView column = new RepeatingView("header");
 		add(column);
-		int count = columnFields.size();
+		int headerRowCount = columnFields.size();
 		if (dataFields.size() > 1) {
-			count++;
+			// add an extra row (the row with data field titles)
+			headerRowCount++;
 		}
 		
 		Component tmp = null;
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < headerRowCount; i++) {
+			// rendering row header (first columns)
 			WebMarkupContainer tr = new WebMarkupContainer(column.newChildId());
 			column.add(tr);
 			RepeatingView rowHeader = new RepeatingView("rowHeader");
 			tr.add(rowHeader);
 			
 			for (int j = 0; j < rowFields.size(); j++) {
-				if (i < count - 1) {
+				if (i < headerRowCount - 1) {
+					// rendering an empty cell
 					tmp = new Label(rowHeader.newChildId(), "");
 					tmp.add(AttributeModifier.append("class", "empty"));
 					rowHeader.add(tmp);
 				} else {
+					// rendering row field title
 					tmp = new Label(rowHeader.newChildId(), rowFields.get(j).getTitle());
 					rowHeader.add(tmp);
 				}
 			}
 			
+			// rendering column keys
 			RepeatingView value = new RepeatingView("value");
 			tr.add(value);
 			for (List<Object> columnKey : columnKeys) {
@@ -85,6 +91,7 @@ public class PivotTable extends Panel {
 				}
 			}
 			
+			// rendering grand total column
 			RepeatingView grandTotalColumn = new RepeatingView("grandTotalColumn");
 			if (i == 0) {
 				tmp = new Label(grandTotalColumn.newChildId(), "Grand Total");
@@ -98,13 +105,14 @@ public class PivotTable extends Panel {
 			} else {
 				for (PivotField dataField : dataFields) {
 					tmp = new Label(value.newChildId(), dataField.getTitle());
-					value.add(tmp);
+					grandTotalColumn.add(tmp);
 				}				
 			}
 			grandTotalColumn.setVisible(pivotModel.isShowGrandTotalForRow());
 			tr.add(grandTotalColumn);
 		}
 		
+		// rendering rows
 		RepeatingView row = new RepeatingView("row");
 		add(row);
 		for (List<Object> rowKey : rowKeys) {
