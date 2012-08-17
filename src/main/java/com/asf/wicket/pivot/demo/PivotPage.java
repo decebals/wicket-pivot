@@ -14,12 +14,15 @@ package com.asf.wicket.pivot.demo;
 
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.util.convert.converter.DoubleConverter;
 
 import wicketdnd.IEBackgroundImageCacheFix;
 import wicketdnd.IECursorFix;
 import wicketdnd.theme.WebTheme;
 
 import com.asf.wicket.pivot.PivotDataSource;
+import com.asf.wicket.pivot.PivotField;
+import com.asf.wicket.pivot.PivotModel;
 import com.asf.wicket.pivot.web.PivotPanel;
 
 /**
@@ -40,7 +43,35 @@ public class PivotPage extends WebPage {
 //		System.out.println("fieldCount = " + pivotDataSource.getFieldCount());
 //		System.out.println("rowCount = " + pivotDataSource.getRowCount());
 		
-		add(new PivotPanel("pivot", pivotDataSource));
+		add(new PivotPanel("pivot", pivotDataSource) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected PivotModel createPivotModel(PivotDataSource pivotDataSource) {
+				PivotModel pivotModel = super.createPivotModel(pivotDataSource);
+				
+				// add some fields on some area
+				pivotModel.getField("REGION").setArea(PivotField.Area.ROW);
+				pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW);
+				pivotModel.getField("YEAR").setArea(PivotField.Area.COLUMN);
+				pivotModel.getField("MONTH").setArea(PivotField.Area.COLUMN).setAreaIndex(1);
+				pivotModel.getField("SALES").setArea(PivotField.Area.DATA);
+
+				// set an aggregator for a data pivot field
+//				pivotModel.getField("SALES").setAggregator(new Aggregator.Count());
+				
+				// set a converter
+				pivotModel.getField("SALES").setConverter(new DoubleConverter());
+				
+				// show grand totals
+				pivotModel.setShowGrandTotalForColumn(true);
+				pivotModel.setShowGrandTotalForRow(true);
+
+				return pivotModel;
+			}
+			
+		});
 	}
 
 	@Override
