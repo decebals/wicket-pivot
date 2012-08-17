@@ -42,8 +42,27 @@ You can specify an aggregator for a data pivot field
     or 
     
     pivotModel.getField("MONEY").setAggregator(new Aggregator.Count());
+
+You can specify a custom converter (wicket IConverter) for a field
+
+    pivotModel.getField("SALES").setConverter(new DoubleConverter() {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public NumberFormat getNumberFormat(Locale locale) {
+            NumberFormat format = super.getNumberFormat(locale);
+            format.setMinimumFractionDigits(2);
+
+            return format;
+        }
+
+    });
     
-I you want to disply programmatically a grand total on rows and/or columns
+If you don't set a coverter for a field then this field (the values) will be rendered 
+with a converter supplied by wicket according to the field type.
+
+If you want to disply programmatically a grand total on rows and/or columns
 
     pivotModel.setShowGrandTotalForColumn(true);
     pivotModel.setShowGrandTotalForRow(true);
