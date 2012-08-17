@@ -12,6 +12,7 @@
  */
 package com.asf.wicket.pivot.web;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MultiMap;
 
 import com.asf.wicket.pivot.PivotField;
@@ -69,8 +71,8 @@ public class PivotTable extends Panel {
 					tmp.add(AttributeModifier.append("class", "empty"));
 					rowHeader.add(tmp);
 				} else {
-					// rendering row field title
-					tmp = new Label(rowHeader.newChildId(), rowFields.get(j).getTitle());
+					// rendering row field
+					tmp = createTitleLabel(rowHeader.newChildId(), rowFields.get(j));
 					rowHeader.add(tmp);
 				}
 			}
@@ -80,12 +82,13 @@ public class PivotTable extends Panel {
 			tr.add(value);
 			for (List<Object> columnKey : columnKeys) {
 				if (i < columnFields.size()) {
-					tmp = new Label(value.newChildId(), columnKey.get(i).toString());
+					PivotField columnField = columnFields.get(i);
+					tmp = createValueLabel(value.newChildId(), columnKey.get(i), columnField);
 					tmp.add(AttributeModifier.append("colspan", dataFields.size()));
 					value.add(tmp);
 				} else {
 					for (PivotField dataField : dataFields) {
-						tmp = new Label(value.newChildId(), dataField.getTitle());
+						tmp = createTitleLabel(value.newChildId(), dataField);
 						value.add(tmp);
 					}
 				}
@@ -104,7 +107,7 @@ public class PivotTable extends Panel {
 				grandTotalColumn.add(tmp);
 			} else {
 				for (PivotField dataField : dataFields) {
-					tmp = new Label(value.newChildId(), dataField.getTitle());
+					tmp = createTitleLabel(value.newChildId(), dataField);
 					grandTotalColumn.add(tmp);
 				}				
 			}
@@ -121,8 +124,9 @@ public class PivotTable extends Panel {
 			RepeatingView rowHeader = new RepeatingView("rowHeader");
 			tr.add(rowHeader);
 
-			for (Object value : rowKey) {
-				tmp = new Label(rowHeader.newChildId(), value.toString());
+			for (int k = 0; k < rowKey.size(); k++) {
+				PivotField rowField = rowFields.get(k);
+				tmp = createValueLabel(rowHeader.newChildId(), rowKey.get(k), rowField);
 				rowHeader.add(tmp);
 			}
 			
@@ -132,8 +136,7 @@ public class PivotTable extends Panel {
 			for (List<Object> columnKey : columnKeys) {
 				for (PivotField dataField : dataFields) {
 					Number cellValue = (Number) pivotModel.getValueAt(dataField, rowKey, columnKey);
-					String valueAsString = convertValue(cellValue);
-					tmp = new Label(value.newChildId(), valueAsString);
+					tmp = createValueLabel(value.newChildId(), cellValue, dataField);				
 					value.add(tmp);					
 				}
 			}
@@ -147,8 +150,7 @@ public class PivotTable extends Panel {
 				}
 				for (PivotField dataField : dataFields) {
 					double grandTotalForRow = PivotUtils.getSummary(dataField, values.get(dataField)).doubleValue();
-					String valueAsString = String.valueOf(grandTotalForRow);
-					tmp = new Label(value.newChildId(), valueAsString);
+					tmp = createGrandTotalLabel(value.newChildId(), grandTotalForRow, true);
 					tmp.add(AttributeModifier.append("class", "grand-total"));
 					value.add(tmp);
 				}
@@ -180,22 +182,31 @@ public class PivotTable extends Panel {
 				} else {
 					grandTotal.put(dataField, grandTotal.get(dataField) + grandTotalForColumn);
 				}
-				String valueAsString = String.valueOf(grandTotalForColumn);
-				tmp = new Label(value.newChildId(), valueAsString);
+				tmp = createGrandTotalLabel(value.newChildId(), grandTotalForColumn, false);
 				value.add(tmp);
 			}
 		}
 		if (pivotModel.isShowGrandTotalForRow()) {
 			for (PivotField dataField : dataFields) {
-				tmp = new Label(value.newChildId(), String.valueOf(grandTotal.get(dataField)));
+				tmp = createGrandTotalLabel(value.newChildId(), grandTotal.get(dataField), true);
 				value.add(tmp);
 			}
 		}
 	}
 
-	// TODO maybe converters for each data type?
-	private String convertValue(Object value) {
-		return (value == null) ? "" : value.toString();
+	/**
+	 * Retrieves a label that display the pivot table title (for fields on ROW and DATA areas) 
+	 */
+	protected Label createTitleLabel(String id, PivotField rowField) {
+		return new Label(id, rowField.getTitle());
+	}
+
+	protected Label createValueLabel(String id, Object value, PivotField pivotField) {
+		return new Label(id, Model.of((Serializable) value));
 	}
 	
+	protected Label createGrandTotalLabel(String id, Object value, boolean forRow) {
+		return new Label(id, Model.of((Serializable) value));
+	}
+
 }
