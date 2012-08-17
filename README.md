@@ -33,11 +33,11 @@ If you want to add programmatically some fields on the pivot areas
     pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW);
     pivotModel.getField("YEAR").setArea(PivotField.Area.COLUMN);
     pivotModel.getField("MONTH").setArea(PivotField.Area.COLUMN).setAreaIndex(1);
-    pivotModel.getField("MONEY").setArea(PivotField.Area.DATA);
+    pivotModel.getField("SALES").setArea(PivotField.Area.DATA);
 
 You can specify an aggregator for a data pivot field
 
-    pivotModel.getField("MONEY").setAggregator(Aggregator.get(Aggregator.COUNT));
+    pivotModel.getField("SALES").setAggregator(Aggregator.get(Aggregator.COUNT));
     
     or 
     
