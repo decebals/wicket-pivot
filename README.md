@@ -59,10 +59,10 @@ You can specify a custom converter (wicket IConverter) for a field
 
     });
     
-If you don't set a coverter for a field then this field (the values) will be rendered 
+If you don't set a converter for a field then this field (the values) will be rendered 
 with a converter supplied by wicket according to the field type.
 
-If you want to disply programmatically a grand total on rows and/or columns
+If you want to display programmatically a grand total on rows and/or columns
 
     pivotModel.setShowGrandTotalForColumn(true);
     pivotModel.setShowGrandTotalForRow(true);
