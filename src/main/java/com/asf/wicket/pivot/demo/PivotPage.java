@@ -14,7 +14,6 @@ package com.asf.wicket.pivot.demo;
 
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.util.convert.converter.DoubleConverter;
 
 import wicketdnd.IEBackgroundImageCacheFix;
 import wicketdnd.IECursorFix;
@@ -61,8 +60,22 @@ public class PivotPage extends WebPage {
 				// set an aggregator for a data pivot field
 //				pivotModel.getField("SALES").setAggregator(new Aggregator.Count());
 				
-				// set a converter
-				pivotModel.getField("SALES").setConverter(new DoubleConverter());
+				// set a custom converter for a pivot field
+				/*
+				pivotModel.getField("SALES").setConverter(new DoubleConverter() {
+
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public NumberFormat getNumberFormat(Locale locale) {
+						NumberFormat format = super.getNumberFormat(locale);
+						format.setMinimumFractionDigits(2);
+						
+						return format;
+					}
+					
+				});
+				*/
 				
 				// show grand totals
 				pivotModel.setShowGrandTotalForColumn(true);

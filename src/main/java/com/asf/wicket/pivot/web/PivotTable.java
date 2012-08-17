@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MultiMap;
+import org.apache.wicket.util.convert.IConverter;
 
 import com.asf.wicket.pivot.PivotField;
 import com.asf.wicket.pivot.PivotModel;
@@ -201,8 +202,23 @@ public class PivotTable extends Panel {
 		return new Label(id, rowField.getTitle());
 	}
 
-	protected Label createValueLabel(String id, Object value, PivotField pivotField) {
-		return new Label(id, Model.of((Serializable) value));
+	protected Label createValueLabel(String id, Object value, final PivotField pivotField) {
+		return new Label(id, Model.of((Serializable) value)) {
+			
+			private static final long serialVersionUID = 1L;
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public <C> IConverter<C> getConverter(Class<C> type) {
+				IConverter<C> converter = (IConverter<C>) pivotField.getConverter();
+				if (converter != null) {
+					return converter;
+				}
+				
+				return super.getConverter(type);
+			}
+
+		};
 	}
 	
 	protected Label createGrandTotalLabel(String id, Object value, boolean forRow) {

@@ -16,6 +16,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.util.convert.IConverter;
+
 /**
  * @author Decebal Suiu
  */
@@ -30,6 +32,7 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 	private int areaIndex;
 	private Class<?> type;
 	private Aggregator aggregator;
+	private IConverter<?> converter;
 	
 	public PivotField(String name, int index) {
 		this.name = name;
@@ -94,6 +97,14 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 		return Number.class.isAssignableFrom(type);
 	}
 	
+	public IConverter<?> getConverter() {
+		return converter;
+	}
+
+	public void setConverter(IConverter<?> converter) {
+		this.converter = converter;
+	}
+
 	@Override
 	public int compareTo(PivotField o) {
 		return areaIndex - o.areaIndex;
