@@ -48,38 +48,8 @@ public class PivotPanel extends Panel {
 		
 		// create a pivot model
 		pivotModel = createPivotModel(pivotDataSource);
-		
-		// add some fields on some area
-//		pivotModel.getField("REGION").setArea(PivotField.Area.ROW);
-		/*
-		pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW);
-		pivotModel.getField("YEAR").setArea(PivotField.Area.COLUMN);
-		pivotModel.getField("MONTH").setArea(PivotField.Area.COLUMN).setAreaIndex(1);
-		pivotModel.getField("MONEY").setArea(PivotField.Area.DATA);
-		*/
-
-		// set an aggregator for a data pivot field
-//		pivotModel.getField("MONEY").setAggregator(new Aggregator.Count());
-		
-		// show grand totals
-//		pivotModel.setShowGrandTotalForColumn(true);
-//		pivotModel.setShowGrandTotalForRow(true);
-		
+				
 		pivotModel.calculate();
-		System.out.println(pivotModel);
-		
-		// debug
-		/*
-		Tree columnsHeaderTree =  pivotModel.getColumnsHeaderTree();
-		System.out.println("### Columns Header Tree ###");
-		TreeHelper.printTree(columnsHeaderTree.getRoot());
-		TreeHelper.printLeafValues(columnsHeaderTree.getRoot());
-
-		Tree rowsHeaderTree =  pivotModel.getRowsHeaderTree();
-		System.out.println("### Rows Header Tree ### ");
-		TreeHelper.printTree(rowsHeaderTree.getRoot());
-		TreeHelper.printLeafValues(rowsHeaderTree.getRoot());
-		*/
 		
 		areasContainer = new WebMarkupContainer("areas");
 		areasContainer.setOutputMarkupId(true);
@@ -92,10 +62,7 @@ public class PivotPanel extends Panel {
 			areaRepeater.add(new PivotAreaPanel(areaRepeater.newChildId(), area));
 		}
 		
-		pivotTable = new PivotTable("pivotTable", pivotModel);
-//		pivotTable.setOutputMarkupId(true);
-		pivotTable.setOutputMarkupPlaceholderTag(true);
-		pivotTable.setVisible(false);
+		pivotTable = createPivotTabel("pivotTable", pivotModel);
 		add(pivotTable);
 		
 		AjaxCheckBox showGrandTotalForColumnCheckBox = new AjaxCheckBox("showGrandTotalForColumn", new PropertyModel<Boolean>(this, "pivotModel.showGrandTotalForColumn")) {
@@ -160,10 +127,6 @@ public class PivotPanel extends Panel {
 		}));
 		add(computeLink);
 	}
-
-	protected PivotModel createPivotModel(PivotDataSource pivotDataSource) {
-		return new DefaultPivotModel(pivotDataSource);
-	}
 	
 	 @Override
 	 public void onEvent(IEvent<?> event) {
@@ -176,6 +139,33 @@ public class PivotPanel extends Panel {
 
 	public PivotModel getPivotModel() {
 		return pivotModel;
+	}
+
+	protected PivotModel createPivotModel(PivotDataSource pivotDataSource) {
+		PivotModel pivotModel = new DefaultPivotModel(pivotDataSource);
+		
+		// debug
+		/*
+		Tree columnsHeaderTree =  pivotModel.getColumnsHeaderTree();
+		System.out.println("### Columns Header Tree ###");
+		TreeHelper.printTree(columnsHeaderTree.getRoot());
+		TreeHelper.printLeafValues(columnsHeaderTree.getRoot());
+
+		Tree rowsHeaderTree =  pivotModel.getRowsHeaderTree();
+		System.out.println("### Rows Header Tree ### ");
+		TreeHelper.printTree(rowsHeaderTree.getRoot());
+		TreeHelper.printLeafValues(rowsHeaderTree.getRoot());
+		*/
+
+		return pivotModel;
+	}
+
+	protected PivotTable createPivotTabel(String id, PivotModel pivotModel) {
+		PivotTable pivotTable = new PivotTable(id, pivotModel);
+		pivotTable.setOutputMarkupPlaceholderTag(true);
+		pivotTable.setVisible(false);
+		
+		return pivotTable;
 	}
 
 	private boolean verify() {
