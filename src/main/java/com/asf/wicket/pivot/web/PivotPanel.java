@@ -178,9 +178,8 @@ public class PivotPanel extends Panel {
 	}
 
 	private boolean verify() {
-		return !pivotModel.getFields(PivotField.Area.COLUMN).isEmpty() &&
-				!pivotModel.getFields(PivotField.Area.ROW).isEmpty()  &&
-				!pivotModel.getFields(PivotField.Area.DATA).isEmpty();
+		return !pivotModel.getFields(PivotField.Area.DATA).isEmpty() && (!pivotModel.getFields(PivotField.Area.COLUMN).isEmpty() ||
+				!pivotModel.getFields(PivotField.Area.ROW).isEmpty());
 	}
 
 }

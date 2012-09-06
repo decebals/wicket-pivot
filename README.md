@@ -13,7 +13,7 @@ or other non sql sources.
 and what is their ordering. Also, here I can mention if I want a grand total on rows and/or columns.
 - **PivotTable** is the component that displays the pivot and it takes a PivotModel object as parameter.
 - **PivotField** is the object that can be put on a pivot's area. This object has a name and an index. 
-As a constraint, on each pivot's area must be minimum one field.
+As a constraint, on pivot's data area must be minimum one field and minimum one field on row or column areas.
 Also on aria DATA you can put only fields with Number type. 
 The pivot fields allow several types of aggregations including sum, average, min, max, count. 
   

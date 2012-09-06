@@ -52,6 +52,9 @@ public class PivotTable extends Panel {
 		RepeatingView column = new RepeatingView("header");
 		add(column);
 		int headerRowCount = columnFields.size();
+		if (headerRowCount == 0) {
+			headerRowCount = 1;
+		}
 		if (dataFields.size() > 1) {
 			// add an extra row (the row with data field titles)
 			headerRowCount++;
@@ -198,8 +201,13 @@ public class PivotTable extends Panel {
 	/**
 	 * Retrieves a label that display the pivot table title (for fields on ROW and DATA areas) 
 	 */
-	protected Label createTitleLabel(String id, PivotField rowField) {
-		return new Label(id, rowField.getTitle());
+	protected Label createTitleLabel(String id, PivotField pivotField) {
+		String title = pivotField.getTitle();
+		if (pivotField.getArea().equals(PivotField.Area.DATA)) {
+			title += " (" + pivotField.getAggregator().getFunction().toUpperCase() + ")"; 
+		}
+
+		return new Label(id, title);
 	}
 
 	protected Label createValueLabel(String id, Object value, final PivotField pivotField) {

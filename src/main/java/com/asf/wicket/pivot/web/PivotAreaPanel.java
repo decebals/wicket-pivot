@@ -92,7 +92,10 @@ public class PivotAreaPanel extends Panel {
 	
 						protected void onEvent(AjaxRequestTarget target) {
 							final AggregatorPanel panel = new AggregatorPanel(modal.getContentId(), itemModel);
+							panel.add(AttributeModifier.append("style", "padding: 10px;"));
 							modal.setContent(panel);
+							modal.setAutoSize(true);
+							modal.setResizable(false);
 							/*
 							modal.setWindowClosedCallback(new WindowClosedCallback() {
 								
@@ -294,9 +297,17 @@ public class PivotAreaPanel extends Panel {
 			aggregators.add(Aggregator.get(Aggregator.MAX));
 			aggregators.add(Aggregator.get(Aggregator.COUNT));
 			final DropDownChoice<Aggregator> aggregatorDownChoice = new DropDownChoice<Aggregator>("aggregator", 
-					new PropertyModel<Aggregator>(this, "aggregator"), 
-					aggregators,
-					new ChoiceRenderer<Aggregator>("function"));
+					new PropertyModel<Aggregator>(this, "aggregator"), aggregators,
+					new ChoiceRenderer<Aggregator>("function") {
+
+						private static final long serialVersionUID = 1L;
+				 		
+						@Override
+						public Object getDisplayValue(Aggregator object) {
+							return ((String) super.getDisplayValue(object)).toUpperCase();
+						}
+				
+			});
 			aggregatorDownChoice.add(new OnChangeAjaxBehavior() {
 
 				private static final long serialVersionUID = 1L;
