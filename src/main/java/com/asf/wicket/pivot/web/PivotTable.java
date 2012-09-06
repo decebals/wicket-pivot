@@ -115,7 +115,7 @@ public class PivotTable extends Panel {
 					grandTotalColumn.add(tmp);
 				}				
 			}
-			grandTotalColumn.setVisible(pivotModel.isShowGrandTotalForRow());
+			grandTotalColumn.setVisible(!columnFields.isEmpty() && pivotModel.isShowGrandTotalForRow());
 			tr.add(grandTotalColumn);
 		}
 		
@@ -145,7 +145,7 @@ public class PivotTable extends Panel {
 				}
 			}
 				
-			if (pivotModel.isShowGrandTotalForRow()) {
+			if (!columnFields.isEmpty() && pivotModel.isShowGrandTotalForRow()) {
 				MultiMap<PivotField, Object> values = new MultiMap<PivotField, Object>();
 				for (List<Object> columnKey: columnKeys) {
 					for (PivotField dataField : dataFields) {
@@ -162,7 +162,7 @@ public class PivotTable extends Panel {
 		}
 		
 		WebMarkupContainer grandTotalRow = new WebMarkupContainer("grandTotalRow");
-		grandTotalRow.setVisible(pivotModel.isShowGrandTotalForColumn());
+		grandTotalRow.setVisible(!rowFields.isEmpty() && pivotModel.isShowGrandTotalForColumn());
 		add(grandTotalRow);
 		
 		Label grandTotalRowHeader = new Label("rowHeader", "Grand Total");
@@ -190,7 +190,7 @@ public class PivotTable extends Panel {
 				value.add(tmp);
 			}
 		}
-		if (pivotModel.isShowGrandTotalForRow()) {
+		if (!columnFields.isEmpty() && pivotModel.isShowGrandTotalForRow()) {
 			for (PivotField dataField : dataFields) {
 				tmp = createGrandTotalLabel(value.newChildId(), grandTotal.get(dataField), true);
 				value.add(tmp);
