@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.asf.wicket.pivot.web;
+package ro.fortsoft.wicket.pivot.web;
 
 import java.util.List;
 
@@ -28,10 +28,10 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import com.asf.wicket.pivot.DefaultPivotModel;
-import com.asf.wicket.pivot.PivotDataSource;
-import com.asf.wicket.pivot.PivotField;
-import com.asf.wicket.pivot.PivotModel;
+import ro.fortsoft.wicket.pivot.DefaultPivotModel;
+import ro.fortsoft.wicket.pivot.PivotDataSource;
+import ro.fortsoft.wicket.pivot.PivotField;
+import ro.fortsoft.wicket.pivot.PivotModel;
 
 /**
  * @author Decebal Suiu

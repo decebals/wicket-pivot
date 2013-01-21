@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.asf.wicket.pivot.web;
+package ro.fortsoft.wicket.pivot.web;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +34,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 
-import com.asf.wicket.pivot.Aggregator;
-import com.asf.wicket.pivot.PivotField;
-import com.asf.wicket.pivot.PivotModel;
+import ro.fortsoft.wicket.pivot.Aggregator;
+import ro.fortsoft.wicket.pivot.PivotField;
+import ro.fortsoft.wicket.pivot.PivotModel;
+
 
 import wicketdnd.Anchor;
 import wicketdnd.DragSource;

@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.asf.wicket.pivot.demo;
+package ro.fortsoft.wicket.pivot.demo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,8 +18,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.asf.wicket.pivot.PivotDataSource;
-import com.asf.wicket.pivot.ResultSetPivotDataSource;
+import ro.fortsoft.wicket.pivot.PivotDataSource;
+import ro.fortsoft.wicket.pivot.ResultSetPivotDataSource;
 
 /**
  * @author Decebal Suiu

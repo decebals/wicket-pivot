@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.asf.wicket.pivot;
+package ro.fortsoft.wicket.pivot;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,9 +24,9 @@ import java.util.TreeSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.MultiKeyMap;
 
-import com.asf.wicket.pivot.tree.Node;
-import com.asf.wicket.pivot.tree.Tree;
-import com.asf.wicket.pivot.tree.TreeHelper;
+import ro.fortsoft.wicket.pivot.tree.Node;
+import ro.fortsoft.wicket.pivot.tree.Tree;
+import ro.fortsoft.wicket.pivot.tree.TreeHelper;
 
 /**
  * @author Decebal Suiu

@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.asf.wicket.pivot.web;
+package ro.fortsoft.wicket.pivot.web;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -27,9 +27,9 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MultiMap;
 import org.apache.wicket.util.convert.IConverter;
 
-import com.asf.wicket.pivot.PivotField;
-import com.asf.wicket.pivot.PivotModel;
-import com.asf.wicket.pivot.PivotUtils;
+import ro.fortsoft.wicket.pivot.PivotField;
+import ro.fortsoft.wicket.pivot.PivotModel;
+import ro.fortsoft.wicket.pivot.PivotUtils;
 
 /**
  * @author Decebal Suiu

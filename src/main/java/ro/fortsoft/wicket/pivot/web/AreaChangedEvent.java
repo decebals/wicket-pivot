@@ -10,17 +10,23 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.asf.wicket.pivot;
+package ro.fortsoft.wicket.pivot.web;
 
-import java.util.List;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 
 /**
  * @author Decebal Suiu
  */
-public class PivotUtils {
-
-	public static Number getSummary(PivotField dataField, List<Object> values) {
-		return (Number) dataField.getAggregator().init().addAll(values.toArray()).getResult();
-	}
+public class AreaChangedEvent {
+	
+	 private final AjaxRequestTarget target;
+	 
+	 public AreaChangedEvent(AjaxRequestTarget target) {
+		 this.target = target;
+	 }
+	 
+	 public AjaxRequestTarget getAjaxRequestTarget() {
+	     return target;
+	 }
 
 }
