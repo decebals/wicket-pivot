@@ -12,14 +12,12 @@
  */
 package ro.fortsoft.wicket.pivot.demo;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 
 import ro.fortsoft.wicket.pivot.PivotDataSource;
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotModel;
 import ro.fortsoft.wicket.pivot.web.PivotPanel;
-
 import wicketdnd.IEBackgroundImageCacheFix;
 import wicketdnd.IECursorFix;
 import wicketdnd.theme.WebTheme;
@@ -34,8 +32,10 @@ public class PivotPage extends WebPage {
 	public PivotPage() {
 		super();		
 		
+		// init wicket dnd
 		add(new IECursorFix());
         add(new IEBackgroundImageCacheFix());
+		add(new WebTheme());
 
 		// create a pivot data source
 		PivotDataSource pivotDataSource = PivotDataSourceHandler.getPivotDataSource();
@@ -84,14 +84,7 @@ public class PivotPage extends WebPage {
 				return pivotModel;
 			}
 			
-		});
+		});		
 	}
-
-	@Override
-    public void renderHead(IHeaderResponse response) {
-		super.renderHead(response);
-		
-        response.renderCSSReference(new WebTheme());
-    }
 			
 }
