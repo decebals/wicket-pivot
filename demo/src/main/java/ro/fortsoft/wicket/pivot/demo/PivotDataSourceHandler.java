@@ -56,7 +56,7 @@ public class PivotDataSourceHandler {
 	}
 	
 	private static Connection getConnection() {
-		String url = "jdbc:derby:./demo/db/";
+		String url = "jdbc:derby:./db/";
 		String dbName = "pivot";
 		String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 		String userName = "sa"; 

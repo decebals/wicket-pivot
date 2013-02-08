@@ -39,6 +39,7 @@ public class PivotPage extends WebPage {
 
 		// create a pivot data source
 		PivotDataSource pivotDataSource = PivotDataSourceHandler.getPivotDataSource();
+		System.out.println("pivotDataSource = " + pivotDataSource);
 //		System.out.println("fieldCount = " + pivotDataSource.getFieldCount());
 //		System.out.println("rowCount = " + pivotDataSource.getRowCount());
 		
