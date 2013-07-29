@@ -48,7 +48,7 @@ First of all you must create a PivotDataSource and secondly add the pivot panel 
 If you want to add programmatically some fields on the pivot areas
 
     pivotModel.getField("REGION").setArea(PivotField.Area.ROW);
-    pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW);
+    pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW).setAreaIndex(1);
     pivotModel.getField("YEAR").setArea(PivotField.Area.COLUMN);
     pivotModel.getField("MONTH").setArea(PivotField.Area.COLUMN).setAreaIndex(1);
     pivotModel.getField("SALES").setArea(PivotField.Area.DATA);
