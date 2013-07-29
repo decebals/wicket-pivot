@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-    <div wicket:id="name" class="name span2"></div>
-    <div class="row-fluid">
-        <div class="span10 values">
-            <div wicket:id="dropHere" class="value-container drop-here"></div>
-            <div wicket:id="values" class="value-container">
-                <span class="initiate" title="Drag">&nbsp;</span><span wicket:id="value" class="value label"></span>
-                <!--
-                <span wicket:id="value" class="value label"></span><i class="icon-move initiate"></i>
-                -->
-            </div>
-        </div>
-    </div>
+    <div wicket:id="name" class="span2 name"></div>
+    <ol wicket:id="fieldsContainer" class="span10 values">
+        <li wicket:id="values" class="value-container">
+            <i class="icon-move initiate" title="Drag"></i>
+            <span wicket:id="value" class="value label"></span>
+        </li>
+    </ol>
     <div wicket:id="modal"></div>
 </wicket:panel>
 </html>

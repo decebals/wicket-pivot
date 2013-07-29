@@ -59,10 +59,12 @@ public class DefaultPivotModel implements PivotModel {
 		}
 	}
 
+	@Override
 	public List<PivotField> getFields() {
 		return fields;
 	}
 
+	@Override
 	public PivotField getField(String name) {
 		for (PivotField field : fields) {
 			if (field.getName().equals(name)) {
@@ -73,6 +75,18 @@ public class DefaultPivotModel implements PivotModel {
 		return null;
 	}
 
+	@Override
+	public PivotField getField(int index) {
+		for (PivotField field : fields) {
+			if (field.getIndex() == index) {
+				return field;
+			}
+		}
+
+		return null;
+	}
+	
+	@Override
 	public List<PivotField> getFields(PivotField.Area area) {
 		List<PivotField> areaFields = new ArrayList<PivotField>();
 		List<PivotField> fields = getFields();
@@ -86,10 +100,12 @@ public class DefaultPivotModel implements PivotModel {
 		return areaFields;
 	}
 
+	@Override
 	public PivotDataSource getDataSource() {
 		return dataSource;
 	}
 
+	@Override
 	public void calculate() {
 		long start = System.currentTimeMillis();
 		rowsHeaderTree = null;

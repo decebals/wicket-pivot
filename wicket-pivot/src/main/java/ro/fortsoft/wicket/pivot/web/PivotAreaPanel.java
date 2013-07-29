@@ -13,7 +13,9 @@
 package ro.fortsoft.wicket.pivot.web;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -23,6 +25,9 @@ import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -33,18 +38,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.template.PackageTextTemplate;
 
 import ro.fortsoft.wicket.pivot.Aggregator;
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotModel;
-
-
-import wicketdnd.Anchor;
-import wicketdnd.DragSource;
-import wicketdnd.DropTarget;
-import wicketdnd.Location;
-import wicketdnd.Operation;
-import wicketdnd.Transfer;
 
 /**
  * @author Decebal Suiu
@@ -53,6 +51,7 @@ public class PivotAreaPanel extends Panel {
 
 	private static final long serialVersionUID = 1L;
 
+	private SortableAjaxBehavior sortableAjaxBehavior;
 	private ListView<PivotField> values;
 	private PivotField.Area area;
 	
@@ -67,6 +66,11 @@ public class PivotAreaPanel extends Panel {
 		modal.setTitle("Aggregator");
 		modal.setAutoSize(true);
 		add(modal);
+		
+		WebMarkupContainer fieldsContainer = new WebMarkupContainer("fieldsContainer");
+		fieldsContainer.setOutputMarkupId(true);
+		fieldsContainer.setMarkupId("area-" + area.getName() + "-" + getSession().nextSequenceValue());
+		add(fieldsContainer);
 		
 		values = new ListView<PivotField>("values") {
 
@@ -118,34 +122,17 @@ public class PivotAreaPanel extends Panel {
 				}
 				item.add(valueLabel);				
 				item.setOutputMarkupId(true);
+				item.setMarkupId("field-" + pivotField.getIndex());
 			}
 		};
-		add(values);
-
-		final Label dropLabel = new Label("dropHere", "Drop here") {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public boolean isVisible() {
-				return findParent(PivotPanel.class).getPivotModel().getFields(getArea()).isEmpty();
-			}
-			
-		};
-		dropLabel.setOutputMarkupId(true);
-		add(dropLabel);
-
-		// add dnd support
-		addDragBehavior();
-		addDropBehavior();
-		addDropForEmptyBehavior();
+		values.setOutputMarkupPlaceholderTag(true);
+		fieldsContainer.add(values);
 		
 		setOutputMarkupId(true);
 	}
 
 	@Override
 	protected void onBeforeRender() {
-//		System.out.println("PivotAreaPanel.onBeforeRender() " + getMarkupId());
 		IModel<List<PivotField>> model = new LoadableDetachableModel<List<PivotField>>() {
 
 			private static final long serialVersionUID = 1L;
@@ -162,10 +149,18 @@ public class PivotAreaPanel extends Panel {
 		super.onBeforeRender();
 	}
 
-	private PivotField.Area getArea() {
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+		
+		addSortableBehavior(get("fieldsContainer"));
+	}
+	
+	public PivotField.Area getArea() {
 		return area;
 	}
 
+	/*
 	private void addDragBehavior() {
 		DragSource dragSource = new DragSource(Operation.MOVE) {
 			
@@ -251,26 +246,72 @@ public class PivotAreaPanel extends Panel {
 //		}.dropLeftAndRight("div.values");
 		add(dropTarget);
 	}
+	*/
 	
-	private void addDropForEmptyBehavior() {
-		DropTarget dropTarget = new DropTarget(Operation.MOVE) {
-			
+	/*
+	private void addSortableBehavior() {
+		SortableAjaxBehavior sortableAjaxBehavior = new SortableAjaxBehavior() {
+
 			private static final long serialVersionUID = 1L;
 
-			public void onDrop(AjaxRequestTarget target, Transfer transfer, Location location) {
-				PivotField transferedField = transfer.getData();
-//				System.out.println("transferedField = " + transferedField);			
-				transferedField.setArea(getArea()).setAreaIndex(0);
+			@Override
+			public void onStop(Item[] items, AjaxRequestTarget target) {
+				PivotModel pivotModel = getPivotModel();
+				for (Item item : items) {
+					PivotField pivotField = pivotModel.getField(item.fieldIndex);
+					pivotField.setArea(PivotField.Area.getValue(item.areaName));
+					pivotField.setAreaIndex(item.sortIndex);
+				}
 				send(getPage(), Broadcast.BREADTH, new AreaChangedEvent(target));
 			}
+			
+		};
+		SortableBehavior sortableBehavior = sortableAjaxBehavior.getSortableBehavior();
+		sortableBehavior.setConnectWith(".fields-container");
+		sortableBehavior.setHandle(".initiate");
+		sortableBehavior.setCursor("move");
+		sortableBehavior.setForcePlaceholderSize(true);
+		sortableBehavior.setPlaceholder("pivot-placeholder");
+		sortableBehavior.setOpacity(0.4f);
+		
+		get("fieldsContainer").add(sortableAjaxBehavior);
+	}
+	*/
+	
+	@Override
+	public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+
+        CharSequence script = sortableAjaxBehavior.getCallbackFunctionBody();
+
+        Map<String, String> vars = new HashMap<String, String>();
+        vars.put("component", get("fieldsContainer").getMarkupId());
+        vars.put("stopBehavior", script.toString());
+
+        PackageTextTemplate template = new PackageTextTemplate(PivotAreaPanel.class, "res/sort-behavior.template.js");
+        template.interpolate(vars);
+
+        response.render(OnDomReadyHeaderItem.forScript(template.getString()));
+    }
+	
+	private void addSortableBehavior(Component component) {
+		sortableAjaxBehavior = new SortableAjaxBehavior() {
+
+			private static final long serialVersionUID = 1L;
 
 			@Override
-			public boolean isEnabled(Component component) {
-				return getPivotModel().getFields(getArea()).isEmpty();
+			public void onSort(AjaxRequestTarget target, Item[] items) {
+				PivotModel pivotModel = getPivotModel();
+				for (Item item : items) {
+					PivotField pivotField = pivotModel.getField(item.fieldIndex);
+					pivotField.setArea(PivotField.Area.getValue(item.areaName));
+					pivotField.setAreaIndex(item.sortIndex);
+				}
+				send(getPage(), Broadcast.BREADTH, new AreaChangedEvent(target));
 			}
 			
-		}.dropCenter("div.value-container");
-		add(dropTarget);		
+		};
+		component.add(sortableAjaxBehavior);
 	}
 
 	private PivotModel getPivotModel() {

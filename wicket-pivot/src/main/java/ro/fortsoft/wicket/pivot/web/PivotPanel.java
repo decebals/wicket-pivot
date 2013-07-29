@@ -20,14 +20,11 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
 
 import ro.fortsoft.wicket.pivot.DefaultPivotModel;
 import ro.fortsoft.wicket.pivot.PivotDataSource;
@@ -129,22 +126,19 @@ public class PivotPanel extends Panel {
 			
 		}));
 		add(computeLink);
+		
+		add(new PivotResourcesBehavior());
 	}
-	
+
 	 @Override
 	 public void onEvent(IEvent<?> event) {
+		 super.onEvent(event);
+			
          if (event.getPayload() instanceof AreaChangedEvent) {
         	 AjaxRequestTarget target = ((AreaChangedEvent) event.getPayload()).getAjaxRequestTarget();
         	 target.add(areasContainer);
         	 target.add(computeLink);
          }
-	}
-
-    @Override
-	public void renderHead(IHeaderResponse response) {
-		super.renderHead(response);
-		
-        response.render(CssHeaderItem.forReference(new PackageResourceReference(PivotPanel.class, "pivot.css")));
 	}
 
 	public PivotModel getPivotModel() {

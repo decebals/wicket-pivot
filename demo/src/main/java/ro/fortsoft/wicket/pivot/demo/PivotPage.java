@@ -18,9 +18,6 @@ import ro.fortsoft.wicket.pivot.PivotDataSource;
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotModel;
 import ro.fortsoft.wicket.pivot.web.PivotPanel;
-import wicketdnd.IEBackgroundImageCacheFix;
-import wicketdnd.IECursorFix;
-import wicketdnd.theme.WebTheme;
 
 /**
  * @author Decebal Suiu
@@ -33,9 +30,11 @@ public class PivotPage extends WebPage {
 		super();		
 		
 		// init wicket dnd
+		/*
 		add(new IECursorFix());
         add(new IEBackgroundImageCacheFix());
 		add(new WebTheme());
+		*/
 
 		// create a pivot data source
 		PivotDataSource pivotDataSource = PivotDataSourceHandler.getPivotDataSource();
@@ -53,7 +52,7 @@ public class PivotPage extends WebPage {
 				
 				// add some fields on some area
 				pivotModel.getField("REGION").setArea(PivotField.Area.ROW);
-				pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW);
+				pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW).setAreaIndex(1);
 				pivotModel.getField("YEAR").setArea(PivotField.Area.COLUMN);
 				pivotModel.getField("MONTH").setArea(PivotField.Area.COLUMN).setAreaIndex(1);
 				pivotModel.getField("SALES").setArea(PivotField.Area.DATA);

@@ -1,0 +1,66 @@
+@CHARSET "ISO-8859-1";
+
+.pivot {
+	margin-top: 10px;
+}
+
+.pivot .row-header {
+	font-weight: bold;
+}
+
+.pivot .grand-total {
+	color: #3A87AD;
+	font-weight: bold;
+}
+
+.areas {
+	padding: 5px;
+	margin: 0px 0px 10px 0px;
+	border: 1px solid #eee;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+.area .name {
+	font-weight: bold;
+	padding: 5px;
+}
+
+.area .value-container {
+	float: left;
+	padding: 5px;
+	margin-right: 5px;
+	border: 1px solid #eee;
+	background-color: #f5f5f5;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+/*
+.area .value {
+	margin-left: 2px;
+}
+*/
+
+.area ol.values {
+	list-style-type: none;
+	float: left;
+	display: block;
+}
+
+.area .initiate {
+    cursor: move;
+}
+
+.pivot-placeholder {
+    background: #f0f0f0;
+    border: 1px dashed #ddd;
+    margin: 3px;
+    height: 24px !important;
+    float: left;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;    
+}

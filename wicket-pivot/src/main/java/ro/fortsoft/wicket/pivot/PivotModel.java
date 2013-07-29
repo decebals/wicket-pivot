@@ -32,6 +32,8 @@ public interface PivotModel extends Serializable {
 	
 	public PivotField getField(String name);
 	
+	public PivotField getField(int index);
+	
 	public PivotDataSource getDataSource();
 	
    /**
