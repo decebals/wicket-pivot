@@ -1,7 +1,8 @@
 Simple wicket pivot table
 =====================
 A pivot table is a data summarization tool found in data visualization programs such as spreadsheets or business intelligence software.
-For more information what it's a pivot table see http://en.wikipedia.org/wiki/Pivot_table
+For more information what it's a pivot table see http://en.wikipedia.org/wiki/Pivot_table.  
+
 Current build status: [![Build Status](https://buildhive.cloudbees.com/job/decebals/job/wicket-pivot/badge/icon)](https://buildhive.cloudbees.com/job/decebals/job/wicket-pivot/)
 
 Components
