@@ -90,7 +90,7 @@ If you want to display programmatically a grand total on rows and/or columns
 Demo
 -------------------
 I have a tiny demo application with a demo apache derby embedded database. The demo application is in demo package.
-To run de demo application use:  
+To run the demo application use:  
  
     mvn install
     cd demo
