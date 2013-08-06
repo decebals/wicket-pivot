@@ -18,7 +18,7 @@ The pivot fields allow several types of aggregations including sum, average, min
 Artifacts
 -------------------
 - Wicket Pivot `wicket-pivot` (jar)
-- Wicket Pivot Demo Demo `wicket-pivot-demo` (war)
+- Wicket Pivot Demo `wicket-pivot-demo` (war)
 
 Using Maven
 -------------------
@@ -90,6 +90,8 @@ Demo
 I have a tiny demo application with a demo apache derby embedded database. The demo application is in demo package.
 To run de demo application use:  
  
+    mvn install
+    cd demo
     mvn jetty:run
 
 In the internet browser type http://localhost:8081/.
