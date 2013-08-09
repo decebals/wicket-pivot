@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ro.fortsoft.wicket.pivot</groupId>
     <artifactId>wicket-pivot-parent</artifactId>
-   	<version>0.4-SNAPSHOT</version>
+   	<version>0.4</version>
     <packaging>pom</packaging>    
 	<name>Wicket Pivot Parent</name>
 	<description>Simple web pivot table using Apache Wicket</description>
@@ -27,7 +27,7 @@
         <connection>scm:git:https://github.com/decebals/wicket-pivot.git</connection>
         <developerConnection>scm:git:https://github.com/decebals/wicket-pivot.git</developerConnection>
         <url>git@github.com/decebals/wicket-pivot.git</url>
-        <tag>HEAD</tag>
+        <tag>release-0.4</tag>
     </scm>
         
     <properties>
