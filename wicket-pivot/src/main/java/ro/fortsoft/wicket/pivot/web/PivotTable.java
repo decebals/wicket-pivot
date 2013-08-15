@@ -45,17 +45,24 @@ public class PivotTable extends Panel {
 		List<PivotField> rowFields = pivotModel.getFields(PivotField.Area.ROW);
 		List<PivotField> dataFields = pivotModel.getFields(PivotField.Area.DATA);
 		
+		int columnFieldsSize = columnFields.size();
+		int rowFieldsSize = rowFields.size();
+		int dataFieldsSize = dataFields.size();
+		
 		List<List<Object>> rowKeys = pivotModel.getRowKeys();
+//		System.out.println("rowKeys = " + rowKeys);
 		List<List<Object>> columnKeys = pivotModel.getColumnKeys();
+//		System.out.println("columnKeys = " + columnKeys);
+		
 		
 		// rendering header
 		RepeatingView column = new RepeatingView("header");
 		add(column);
-		int headerRowCount = columnFields.size();
+		int headerRowCount = columnFieldsSize;
 		if (headerRowCount == 0) {
 			headerRowCount = 1;
 		}
-		if (dataFields.size() > 1) {
+		if ((dataFieldsSize > 1) && (columnFieldsSize > 0)) {
 			// add an extra row (the row with data field titles)
 			headerRowCount++;
 		}
@@ -68,7 +75,7 @@ public class PivotTable extends Panel {
 			RepeatingView rowHeader = new RepeatingView("rowHeader");
 			tr.add(rowHeader);
 			
-			for (int j = 0; j < rowFields.size(); j++) {
+			for (int j = 0; j < rowFieldsSize; j++) {
 				if (i < headerRowCount - 1) {
 					// rendering an empty cell
 					tmp = new Label(rowHeader.newChildId(), "");
@@ -85,10 +92,10 @@ public class PivotTable extends Panel {
 			RepeatingView value = new RepeatingView("value");
 			tr.add(value);
 			for (List<Object> columnKey : columnKeys) {
-				if (i < columnFields.size()) {
+				if (i < columnFieldsSize) {
 					PivotField columnField = columnFields.get(i);
 					tmp = createValueLabel(value.newChildId(), columnKey.get(i), columnField);
-					tmp.add(AttributeModifier.append("colspan", dataFields.size()));
+					tmp.add(AttributeModifier.append("colspan", dataFieldsSize));
 					value.add(tmp);
 				} else {
 					for (PivotField dataField : dataFields) {
@@ -102,11 +109,11 @@ public class PivotTable extends Panel {
 			RepeatingView grandTotalColumn = new RepeatingView("grandTotalColumn");
 			if (i == 0) {
 				tmp = new Label(grandTotalColumn.newChildId(), "Grand Total");
-				tmp.add(AttributeModifier.append("colspan", dataFields.size()));
+				tmp.add(AttributeModifier.append("colspan", dataFieldsSize));
 				grandTotalColumn.add(tmp);
-			} else if (i < columnFields.size()) {
+			} else if (i < columnFieldsSize) {
 				tmp = new WebMarkupContainer(grandTotalColumn.newChildId());
-				tmp.add(AttributeModifier.append("colspan", dataFields.size()));
+				tmp.add(AttributeModifier.append("colspan", dataFieldsSize));
 				tmp.add(AttributeModifier.append("class", "empty"));
 				grandTotalColumn.add(tmp);
 			} else {
@@ -166,7 +173,7 @@ public class PivotTable extends Panel {
 		add(grandTotalRow);
 		
 		Label grandTotalRowHeader = new Label("rowHeader", "Grand Total");
-		grandTotalRowHeader.add(AttributeModifier.append("colspan", rowFields.size()));
+		grandTotalRowHeader.add(AttributeModifier.append("colspan", rowFieldsSize));
 		grandTotalRow.add(grandTotalRowHeader);
 		
 		RepeatingView value = new RepeatingView("value");
