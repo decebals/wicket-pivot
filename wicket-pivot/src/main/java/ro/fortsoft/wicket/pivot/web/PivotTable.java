@@ -289,7 +289,7 @@ public class PivotTable extends GenericPanel<PivotModel> {
 		}
 		
 		// quick and dirty
-		Node node = getNode(root, path);
+		Node node = TreeHelper.getNode(root, path);
 		
 		int span = 1;
 		if (!node.isLeaf()) {
@@ -298,24 +298,5 @@ public class PivotTable extends GenericPanel<PivotModel> {
 		
 		return span;
 	}
-	
-	private Node getNode(Node root, List<Object> path) {
-		Node node = root;
-		for (Object value : path) {
-			node = getChild(node, value);			
-		}
 		
-		return node;
-	}
-	
-	private Node getChild(Node node, Object value) {
-		for (Node child : node.getChildren()) {
-			if (value.equals(child.getData())) {
-				return child;
-			}
-		}
-		
-		return null;
-	}
-	
 }

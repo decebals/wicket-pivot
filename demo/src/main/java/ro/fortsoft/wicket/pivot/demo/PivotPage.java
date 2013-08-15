@@ -29,13 +29,6 @@ public class PivotPage extends WebPage {
 	public PivotPage() {
 		super();		
 		
-		// init wicket dnd
-		/*
-		add(new IECursorFix());
-        add(new IEBackgroundImageCacheFix());
-		add(new WebTheme());
-		*/
-
 		// create a pivot data source
 		PivotDataSource pivotDataSource = PivotDataSourceHandler.getPivotDataSource();
 		System.out.println("pivotDataSource = " + pivotDataSource);

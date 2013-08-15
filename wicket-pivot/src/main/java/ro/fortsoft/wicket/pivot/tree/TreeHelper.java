@@ -44,6 +44,26 @@ public class TreeHelper {
 		return leafValues;
 	}
 	
+	public static Node getNode(Node root, List<Object> pathValues) {
+		Node node = root;
+		for (Object value : pathValues) {
+			node = getChild(node, value);			
+		}
+		
+		return node;
+	}
+	
+	public static Node getChild(Node node, Object value) {
+		for (Node child : node.getChildren()) {
+			if (value.equals(child.getData())) {
+				return child;
+			}
+		}
+		
+		return null;
+	}
+
+	
 	public static void printTree(Node root) {
 		Iterator<Node> it = new TreeIterator(root);
 		while (it.hasNext()) {
