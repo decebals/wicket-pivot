@@ -42,6 +42,7 @@ public class PivotPanel extends Panel {
 	private PivotModel pivotModel;
 	private PivotTable pivotTable;
 	private AjaxLink<Void> computeLink;
+	private boolean autoCompute;
 
 	public PivotPanel(String id, PivotDataSource pivotDataSource) {
 		super(id);
@@ -89,21 +90,26 @@ public class PivotPanel extends Panel {
 		};
 		add(showGrandTotalForRowCheckBox);
 
+		AjaxCheckBox autoComputeCheckBox = new AjaxCheckBox("autoCompute", new PropertyModel<Boolean>(this, "autoCompute")) {
+			
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onUpdate(AjaxRequestTarget target) {
+				computeLink.setVisible(!autoCompute);
+				target.add(computeLink);
+			}
+			
+		};
+		add(autoComputeCheckBox);
+		
 		computeLink = new IndicatingAjaxLink<Void>("compute") {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				if (!verify()) {
-					return;
-				}
-				
-				pivotModel.calculate();
-				PivotTable newPivotTable = new PivotTable("pivotTable", pivotModel);
-				pivotTable.replaceWith(newPivotTable);
-				pivotTable = newPivotTable;
-				target.add(pivotTable);
+				compute(target);
 			}
 
 			/*
@@ -114,7 +120,7 @@ public class PivotPanel extends Panel {
 			*/
 			
 		};
-		computeLink.setOutputMarkupId(true);
+		computeLink.setOutputMarkupPlaceholderTag(true);
 		computeLink.add(AttributeModifier.append("class", new AbstractReadOnlyModel<String>() {
 
 			private static final long serialVersionUID = 1L;
@@ -138,6 +144,10 @@ public class PivotPanel extends Panel {
         	 AjaxRequestTarget target = ((AreaChangedEvent) event.getPayload()).getAjaxRequestTarget();
         	 target.add(areasContainer);
         	 target.add(computeLink);
+        	 
+        	 if (autoCompute) {
+        		 compute(target);
+        	 }
          }
 	}
 
@@ -177,4 +187,16 @@ public class PivotPanel extends Panel {
 				!pivotModel.getFields(PivotField.Area.ROW).isEmpty());
 	}
 
+	private void compute(AjaxRequestTarget target) {
+		if (!verify()) {
+			return;
+		}
+		
+		pivotModel.calculate();
+		PivotTable newPivotTable = new PivotTable("pivotTable", pivotModel);
+		pivotTable.replaceWith(newPivotTable);
+		pivotTable = newPivotTable;
+		target.add(pivotTable);
+	}
+	
 }
