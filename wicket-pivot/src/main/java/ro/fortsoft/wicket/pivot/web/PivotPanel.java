@@ -21,9 +21,10 @@ import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
 import ro.fortsoft.wicket.pivot.DefaultPivotModel;
@@ -34,7 +35,7 @@ import ro.fortsoft.wicket.pivot.PivotModel;
 /**
  * @author Decebal Suiu
  */
-public class PivotPanel extends Panel {
+public class PivotPanel extends GenericPanel<PivotDataSource> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,10 +46,15 @@ public class PivotPanel extends Panel {
 	private boolean autoCompute;
 
 	public PivotPanel(String id, PivotDataSource pivotDataSource) {
-		super(id);
-		
+		super(id, Model.of(pivotDataSource));
+	}
+	
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+
 		// create a pivot model
-		pivotModel = createPivotModel(pivotDataSource);
+		pivotModel = createPivotModel(getModelObject());
 				
 		pivotModel.calculate();
 		
@@ -98,6 +104,10 @@ public class PivotPanel extends Panel {
 			protected void onUpdate(AjaxRequestTarget target) {
 				computeLink.setVisible(!autoCompute);
 				target.add(computeLink);
+				
+				if (autoCompute && !pivotTable.isVisible()) {
+					compute(target);
+				}
 			}
 			
 		};

@@ -13,6 +13,7 @@
 package ro.fortsoft.wicket.pivot.web;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MultiMap;
@@ -30,16 +31,29 @@ import org.apache.wicket.util.convert.IConverter;
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotModel;
 import ro.fortsoft.wicket.pivot.PivotUtils;
+import ro.fortsoft.wicket.pivot.tree.Node;
+import ro.fortsoft.wicket.pivot.tree.TreeHelper;
 
 /**
  * @author Decebal Suiu
  */
-public class PivotTable extends Panel {
+public class PivotTable extends GenericPanel<PivotModel> {
 
 	private static final long serialVersionUID = 1L;
 
+	private Map<List<Object>, Integer> spanCache;
+	
 	public PivotTable(String id, PivotModel pivotModel) {
-		super(id);
+		super(id, Model.of(pivotModel));
+	}
+
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+
+		spanCache = new HashMap<List<Object>, Integer>();
+
+		PivotModel pivotModel = getModelObject();
 		
 		List<PivotField> columnFields = pivotModel.getFields(PivotField.Area.COLUMN);
 		List<PivotField> rowFields = pivotModel.getFields(PivotField.Area.ROW);
@@ -53,7 +67,6 @@ public class PivotTable extends Panel {
 //		System.out.println("rowKeys = " + rowKeys);
 		List<List<Object>> columnKeys = pivotModel.getColumnKeys();
 //		System.out.println("columnKeys = " + columnKeys);
-		
 		
 		// rendering header
 		RepeatingView column = new RepeatingView("header");
@@ -91,12 +104,27 @@ public class PivotTable extends Panel {
 			// rendering column keys
 			RepeatingView value = new RepeatingView("value");
 			tr.add(value);
+			Node columnsRoot = pivotModel.getColumnsHeaderTree().getRoot();
+			List<List<Object>> pathRenderedCache = new ArrayList<List<Object>>();
 			for (List<Object> columnKey : columnKeys) {
+//				System.out.println(">>> " + columnKey);
 				if (i < columnFieldsSize) {
 					PivotField columnField = columnFields.get(i);
+//					System.out.println("+++ " + columnKey.get(i) + " <<< " + i);
+					List<Object> path = new ArrayList<Object>(columnKey.subList(0, i + 1));
+//					System.out.println("columnPath = " + path);
+					int colspan = getSpan(columnsRoot, path);
+//					System.out.println("### colspan = " + colspan);
 					tmp = createValueLabel(value.newChildId(), columnKey.get(i), columnField);
-					tmp.add(AttributeModifier.append("colspan", dataFieldsSize));
+					colspan = colspan * dataFieldsSize;
+					tmp.add(AttributeModifier.append("colspan", colspan));
 					value.add(tmp);
+					// TODO optimization (create an emptyPanel is more optimal)
+					if (pathRenderedCache.contains(path)) {
+						tmp.setVisible(false);
+					} else {
+						pathRenderedCache.add(path);
+					}
 				} else {
 					for (PivotField dataField : dataFields) {
 						tmp = createTitleLabel(value.newChildId(), dataField);
@@ -129,6 +157,8 @@ public class PivotTable extends Panel {
 		// rendering rows
 		RepeatingView row = new RepeatingView("row");
 		add(row);
+		Node rowsRoot = pivotModel.getRowsHeaderTree().getRoot();
+		List<List<Object>> pathRenderedCache = new ArrayList<List<Object>>();
 		for (List<Object> rowKey : rowKeys) {
 			WebMarkupContainer tr = new WebMarkupContainer(row.newChildId());
 			row.add(tr);
@@ -136,9 +166,22 @@ public class PivotTable extends Panel {
 			tr.add(rowHeader);
 
 			for (int k = 0; k < rowKey.size(); k++) {
+				List<Object> path = new ArrayList<Object>(rowKey.subList(0, k + 1));
+//				System.out.println("rowPath = " + path);
+				int rowspan = getSpan(rowsRoot, path);
+//				System.out.println("### rowspan = " + rowspan);
+
 				PivotField rowField = rowFields.get(k);
 				tmp = createValueLabel(rowHeader.newChildId(), rowKey.get(k), rowField);
+				tmp.add(AttributeModifier.append("rowspan", rowspan));
 				rowHeader.add(tmp);
+				
+				// TODO optimization (create an emptyPanel is more optimal)
+				if (pathRenderedCache.contains(path)) {
+					tmp.setVisible(false);
+				} else {
+					pathRenderedCache.add(path);
+				}
 			}
 			
 			RepeatingView value = new RepeatingView("value");
@@ -240,4 +283,39 @@ public class PivotTable extends Panel {
 		return new Label(id, Model.of((Serializable) value));
 	}
 
+	private int getSpan(Node root, List<Object> path) {
+		if (spanCache.containsKey(path)) {
+			return spanCache.get(path);
+		}
+		
+		// quick and dirty
+		Node node = getNode(root, path);
+		
+		int span = 1;
+		if (!node.isLeaf()) {
+			span = TreeHelper.getLeafs(node).size();
+		}
+		
+		return span;
+	}
+	
+	private Node getNode(Node root, List<Object> path) {
+		Node node = root;
+		for (Object value : path) {
+			node = getChild(node, value);			
+		}
+		
+		return node;
+	}
+	
+	private Node getChild(Node node, Object value) {
+		for (Node child : node.getChildren()) {
+			if (value.equals(child.getData())) {
+				return child;
+			}
+		}
+		
+		return null;
+	}
+	
 }

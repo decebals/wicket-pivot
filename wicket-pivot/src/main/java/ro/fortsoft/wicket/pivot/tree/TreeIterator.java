@@ -27,14 +27,17 @@ public class TreeIterator implements Iterator<Node> {
         this.iterator = getList(root).iterator();
     }
 
+    @Override
     public boolean hasNext() {
         return iterator.hasNext();
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
 	public Node next() {
 		return iterator.next();
 	}
