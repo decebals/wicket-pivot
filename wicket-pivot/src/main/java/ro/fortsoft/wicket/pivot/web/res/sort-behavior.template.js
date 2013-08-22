@@ -1,6 +1,5 @@
 $('#${component}').sortable({
-    connectWith: '.values',
-    handle: '.icon-move',
+    connectWith: '.fields',
     forcePlaceholderSize: true,
     placeholder: 'pivot-placeholder',
     cursor: 'move',

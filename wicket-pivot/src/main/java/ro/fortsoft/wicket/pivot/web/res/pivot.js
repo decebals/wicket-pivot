@@ -1,8 +1,8 @@
 function serializeFieldLocations(/*areasId*/) {
 //	console.log(areasId);
 	var items = [];
-//	$("#" + areasId).find("ol.values").each(function() {
-	$("ol.values").each(function() {
+//	$("#" + areasId).find("ol.fields").each(function() {
+	$("ol.fields").each(function() {
 		var areaId = $(this).attr("id");
 		var areaName = areaId.substring(areaId.indexOf("-") + 1, areaId.lastIndexOf("-")); // "area-<name>-<uid>"
 		$(this).children().each(function(i) {

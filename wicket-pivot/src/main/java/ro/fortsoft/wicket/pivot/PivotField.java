@@ -25,6 +25,10 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 
 	private static final long serialVersionUID = 1L;
 	
+	public static final int SORT_ORDER_UNSORTED = 0;
+	public static final int SORT_ORDER_ASCENDING = 1;
+	public static final int SORT_ORDER_DESCENDING = 2;
+	
 	private String name;
 	private String title;
 	private Area area;
@@ -33,11 +37,13 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 	private Class<?> type;
 	private Aggregator aggregator;
 	private IConverter<?> converter;
+	private int sortOrder;
 	
 	public PivotField(String name, int index) {
 		this.name = name;
 		this.index = index;
 		
+		sortOrder = SORT_ORDER_ASCENDING;
 		aggregator = Aggregator.get(Aggregator.SUM);
 	}
 	
@@ -103,6 +109,14 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 
 	public void setConverter(IConverter<?> converter) {
 		this.converter = converter;
+	}
+
+	public int getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(int sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 
 	@Override

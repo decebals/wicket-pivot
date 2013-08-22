@@ -58,5 +58,10 @@ public interface PivotModel extends Serializable {
 	public Tree getColumnsHeaderTree(); // ?!
 	
 	public Tree getRowsHeaderTree(); // ?!
+	
+	public boolean isAutoCalculate();
+	
+	public void setAutoCalculate(boolean autoCalculate);
+	
 
 }

@@ -12,35 +12,29 @@
  */
 package ro.fortsoft.wicket.pivot.web;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.GenericPanel;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.template.PackageTextTemplate;
 
-import ro.fortsoft.wicket.pivot.Aggregator;
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotModel;
 
@@ -52,81 +46,73 @@ public class PivotAreaPanel extends Panel {
 	private static final long serialVersionUID = 1L;
 
 	private SortableAjaxBehavior sortableAjaxBehavior;
-	private ListView<PivotField> values;
+	private ListView<PivotField> fieldsView;
 	private PivotField.Area area;
+	private ModalWindow modal;
 	
 	public PivotAreaPanel(String id, PivotField.Area area) {
 		super(id);
 
 		this.area = area;
 		
-		add(new Label("name", area.getName().toUpperCase()));
-
-		final ModalWindow modal = new ModalWindow("modal");
-		modal.setTitle("Aggregator");
+		modal = new ModalWindow("modal");
 		modal.setAutoSize(true);
 		add(modal);
+
+		add(new Label("name", area.getName().toUpperCase()));
 		
 		WebMarkupContainer fieldsContainer = new WebMarkupContainer("fieldsContainer");
 		fieldsContainer.setOutputMarkupId(true);
 		fieldsContainer.setMarkupId("area-" + area.getName() + "-" + getSession().nextSequenceValue());
 		add(fieldsContainer);
 		
-		values = new ListView<PivotField>("values") {
+		fieldsView = new ListView<PivotField>("fields") {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected void populateItem(ListItem<PivotField> item) {
 				final IModel<PivotField> itemModel = item.getModel();
-				PivotField pivotField = itemModel.getObject();
-				String title = pivotField.getTitle();
-				if (pivotField.getArea().equals(PivotField.Area.DATA)) {
-					title += " (" + pivotField.getAggregator().getFunction().toUpperCase() + ")"; 
-				}
-				Label valueLabel = new Label("value", title);
-				if (pivotField.isNumber()) {
-					valueLabel.add(AttributeModifier.append("class", "label-info"));
-//				} else {
-//					valueLabel.add(AttributeModifier.append("class", "label-important"));
-				}
-				if (item.getModelObject().getArea().equals(PivotField.Area.DATA)) {
-					valueLabel.add(new AjaxEventBehavior("onclick") {
-	
-						private static final long serialVersionUID = 1L;
-	
-						protected void onEvent(AjaxRequestTarget target) {
-							final AggregatorPanel panel = new AggregatorPanel(modal.getContentId(), itemModel);
-							panel.add(AttributeModifier.append("style", "padding: 10px;"));
-							modal.setContent(panel);
-							modal.setAutoSize(true);
-							modal.setResizable(false);
-							/*
-							modal.setWindowClosedCallback(new WindowClosedCallback() {
-								
-								private static final long serialVersionUID = 1L;
+				final PivotField pivotField = itemModel.getObject();
+				final PivotField.Area area = PivotAreaPanel.this.area;
+				Label fieldLabel = new Label("field", new AbstractReadOnlyModel<String>() {
 
-								public void onClose(AjaxRequestTarget target) {
-									if (panel.isOkPressed()) {
-										System.out.println(">>> " + itemModel.getObject().getAggregator());
-									}
-								}
-								
-							});
-							*/
-							modal.show(target);
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public String getObject() {
+						String title = pivotField.getTitle();
+						if (area.equals(PivotField.Area.DATA)) {
+							title += " (" + pivotField.getAggregator().getFunction().toUpperCase() + ")"; 
 						}
 						
-					});
-					valueLabel.add(AttributeModifier.append("style", "cursor: pointer;"));
+						return title;
+					}
+					
+				});
+				if (pivotField.isNumber()) {
+					item.add(AttributeModifier.append("class", "field-number"));
 				}
-				item.add(valueLabel);				
+												
+				// add field actions panel
+				if (!area.equals(PivotField.Area.UNUSED)) {
+					PivotFieldActionsPanel pivotFieldActionsPanel = new PivotFieldActionsPanel("dropDownPanel", Model.of(pivotField));
+					pivotFieldActionsPanel.setRenderBodyOnly(true);
+					item.add(pivotFieldActionsPanel);
+					String markupId = "dropdown-" + pivotField.getIndex();
+					pivotFieldActionsPanel.get("dropdown").setMarkupId(markupId);
+					fieldLabel.add(AttributeModifier.append("data-dropdown", "#" + markupId));
+				} else {
+					item.add(new EmptyPanel("dropDownPanel").setVisible(false));
+				}
+				
+				item.add(fieldLabel);				
 				item.setOutputMarkupId(true);
 				item.setMarkupId("field-" + pivotField.getIndex());
 			}
 		};
-		values.setOutputMarkupPlaceholderTag(true);
-		fieldsContainer.add(values);
+		fieldsView.setOutputMarkupPlaceholderTag(true);
+		fieldsContainer.add(fieldsView);
 		
 		setOutputMarkupId(true);
 	}
@@ -144,7 +130,7 @@ public class PivotAreaPanel extends Panel {
 			
 		};
 
-		values.setModel(model);
+		fieldsView.setModel(model);
 		
 		super.onBeforeRender();
 	}
@@ -160,6 +146,10 @@ public class PivotAreaPanel extends Panel {
 		return area;
 	}
 	
+	public ModalWindow getModal() {
+		return modal;
+	}
+
 	@Override
 	public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
@@ -176,6 +166,10 @@ public class PivotAreaPanel extends Panel {
         response.render(OnDomReadyHeaderItem.forScript(template.getString()));
     }
 	
+	public ListView<PivotField> getFieldsView() {
+		return fieldsView;
+	}
+
 	private void addSortableBehavior(Component component) {
 		sortableAjaxBehavior = new SortableAjaxBehavior() {
 
@@ -199,71 +193,5 @@ public class PivotAreaPanel extends Panel {
 	private PivotModel getPivotModel() {
 		return findParent(PivotPanel.class).getPivotModel();
 	}
-	
-	private class AggregatorPanel extends GenericPanel<PivotField> {
-
-		private static final long serialVersionUID = 1L;
-
-		private Aggregator aggregator;
-//		private boolean okPressed;
 		
-		public AggregatorPanel(String id, final IModel<PivotField> model) {
-			super(id, model);
-			
-//			okPressed = false;
-			
-			aggregator = model.getObject().getAggregator();
-			
-			List<Aggregator> aggregators = new ArrayList<Aggregator>();
-			aggregators.add(Aggregator.get(Aggregator.SUM));
-			aggregators.add(Aggregator.get(Aggregator.AVG));
-			aggregators.add(Aggregator.get(Aggregator.MIN));
-			aggregators.add(Aggregator.get(Aggregator.MAX));
-			aggregators.add(Aggregator.get(Aggregator.COUNT));
-			final DropDownChoice<Aggregator> aggregatorDownChoice = new DropDownChoice<Aggregator>("aggregator", 
-					new PropertyModel<Aggregator>(this, "aggregator"), aggregators,
-					new ChoiceRenderer<Aggregator>("function") {
-
-						private static final long serialVersionUID = 1L;
-				 		
-						@Override
-						public Object getDisplayValue(Aggregator object) {
-							return ((String) super.getDisplayValue(object)).toUpperCase();
-						}
-				
-			});
-			aggregatorDownChoice.add(new OnChangeAjaxBehavior() {
-
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				protected void onUpdate(AjaxRequestTarget target) {
-				}
-				
-			});
-			aggregatorDownChoice.setOutputMarkupId(true);
-			add(aggregatorDownChoice);
-			
-			add(new AjaxLink<Void>("ok") {
-
-				private static final long serialVersionUID = 1L;
-
-				public void onClick(AjaxRequestTarget target) {
-//					okPressed = true;
-					getPivotModel().getField(model.getObject().getName()).setAggregator(aggregator);
-					target.add(PivotAreaPanel.this);
-					ModalWindow.closeCurrent(target);
-				}
-				
-			});
-		}
-		
-		/*
-		public boolean isOkPressed() {
-			return okPressed;
-		}
-		*/
-
-	}
-	
 }

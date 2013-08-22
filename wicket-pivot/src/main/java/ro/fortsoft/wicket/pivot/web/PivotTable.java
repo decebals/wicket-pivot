@@ -249,7 +249,7 @@ public class PivotTable extends GenericPanel<PivotModel> {
 	}
 
 	/**
-	 * Retrieves a label that display the pivot table title (for fields on ROW and DATA areas) 
+	 * Retrieves a name that display the pivot table title (for fields on ROW and DATA areas) 
 	 */
 	protected Label createTitleLabel(String id, PivotField pivotField) {
 		String title = pivotField.getTitle();

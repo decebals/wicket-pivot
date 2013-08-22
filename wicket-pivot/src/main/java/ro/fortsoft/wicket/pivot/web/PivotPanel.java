@@ -27,9 +27,11 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
+import ro.fortsoft.wicket.pivot.DefaultPivotFieldActionsFactory;
 import ro.fortsoft.wicket.pivot.DefaultPivotModel;
 import ro.fortsoft.wicket.pivot.PivotDataSource;
 import ro.fortsoft.wicket.pivot.PivotField;
+import ro.fortsoft.wicket.pivot.PivotFieldActionsFactory;
 import ro.fortsoft.wicket.pivot.PivotModel;
 
 /**
@@ -43,7 +45,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 	private PivotModel pivotModel;
 	private PivotTable pivotTable;
 	private AjaxLink<Void> computeLink;
-	private boolean autoCompute;
+	// TODO: requires Serializable?!
+	private PivotFieldActionsFactory pivotFieldActionsFactory;
 
 	public PivotPanel(String id, PivotDataSource pivotDataSource) {
 		super(id, Model.of(pivotDataSource));
@@ -56,6 +59,9 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		// create a pivot model
 		pivotModel = createPivotModel(getModelObject());
 				
+		// create pivot field action factory
+		pivotFieldActionsFactory = createPivotFieldActionsFactory();
+		
 		pivotModel.calculate();
 		
 		areasContainer = new WebMarkupContainer("areas");
@@ -96,22 +102,22 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		};
 		add(showGrandTotalForRowCheckBox);
 
-		AjaxCheckBox autoComputeCheckBox = new AjaxCheckBox("autoCompute", new PropertyModel<Boolean>(this, "autoCompute")) {
+		AjaxCheckBox autoCalculateCheckBox = new AjaxCheckBox("autoCalculate", new PropertyModel<Boolean>(this, "pivotModel.autoCalculate")) {
 			
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-				computeLink.setVisible(!autoCompute);
+				computeLink.setVisible(!pivotModel.isAutoCalculate());
 				target.add(computeLink);
 				
-				if (autoCompute && !pivotTable.isVisible()) {
+				if (pivotModel.isAutoCalculate() && !pivotTable.isVisible()) {
 					compute(target);
 				}
 			}
 			
 		};
-		add(autoComputeCheckBox);
+		add(autoCalculateCheckBox);
 		
 		computeLink = new IndicatingAjaxLink<Void>("compute") {
 
@@ -155,7 +161,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
         	 target.add(areasContainer);
         	 target.add(computeLink);
         	 
-        	 if (autoCompute) {
+        	 if (pivotModel.isAutoCalculate()) {
         		 compute(target);
         	 }
          }
@@ -163,6 +169,22 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 
 	public PivotModel getPivotModel() {
 		return pivotModel;
+	}
+
+	public PivotFieldActionsFactory getPivotFieldActionsFactory() {
+		return pivotFieldActionsFactory;
+	}
+
+	public void compute(AjaxRequestTarget target) {
+		if (!verify()) {
+			return;
+		}
+		
+		pivotModel.calculate();
+		PivotTable newPivotTable = new PivotTable("pivotTable", pivotModel);
+		pivotTable.replaceWith(newPivotTable);
+		pivotTable = newPivotTable;
+		target.add(pivotTable);
 	}
 
 	protected PivotModel createPivotModel(PivotDataSource pivotDataSource) {
@@ -191,22 +213,14 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		
 		return pivotTable;
 	}
+	
+	protected PivotFieldActionsFactory createPivotFieldActionsFactory() {
+		return new DefaultPivotFieldActionsFactory();
+	}
 
 	private boolean verify() {
 		return !pivotModel.getFields(PivotField.Area.DATA).isEmpty() && (!pivotModel.getFields(PivotField.Area.COLUMN).isEmpty() ||
 				!pivotModel.getFields(PivotField.Area.ROW).isEmpty());
-	}
-
-	private void compute(AjaxRequestTarget target) {
-		if (!verify()) {
-			return;
-		}
-		
-		pivotModel.calculate();
-		PivotTable newPivotTable = new PivotTable("pivotTable", pivotModel);
-		pivotTable.replaceWith(newPivotTable);
-		pivotTable = newPivotTable;
-		target.add(pivotTable);
 	}
 	
 }

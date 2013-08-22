@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +44,7 @@ public class DefaultPivotModel implements PivotModel {
 
 	private boolean showGrandTotalForColumn;
 	private boolean showGrandTotalForRow;
+	private boolean autoCalculate;
 
 	public DefaultPivotModel(PivotDataSource dataSource) {
 		this.dataSource = dataSource;
@@ -171,6 +173,7 @@ public class DefaultPivotModel implements PivotModel {
 		return data;
 	}
 		
+	@Override
 	public Tree getColumnsHeaderTree() {
 		if (columnsHeaderTree == null) {
 			Node root = new Node();
@@ -181,6 +184,7 @@ public class DefaultPivotModel implements PivotModel {
 		return columnsHeaderTree;
 	}
 
+	@Override
 	public Tree getRowsHeaderTree() {
 		if (rowsHeaderTree == null) {
 			Node root = new Node();
@@ -191,10 +195,12 @@ public class DefaultPivotModel implements PivotModel {
 		return rowsHeaderTree;
 	}
 
+	@Override
 	public List<List<Object>> getRowKeys() {
 		return TreeHelper.getLeafValues(getRowsHeaderTree().getRoot());
 	}
 
+	@Override
 	public List<List<Object>> getColumnKeys() {
 		return TreeHelper.getLeafValues(getColumnsHeaderTree().getRoot());
 	}
@@ -204,20 +210,34 @@ public class DefaultPivotModel implements PivotModel {
 		return calculatedData.get(index).get(rowKey, columnKey);
 	}
 
+	@Override
 	public boolean isShowGrandTotalForColumn() {
 		return showGrandTotalForColumn;
 	}
 
+	@Override
 	public void setShowGrandTotalForColumn(boolean showGrandTotalForColumn) {
 		this.showGrandTotalForColumn = showGrandTotalForColumn;
 	}
 
+	@Override
 	public boolean isShowGrandTotalForRow() {
 		return showGrandTotalForRow;
 	}
 
+	@Override
 	public void setShowGrandTotalForRow(boolean showGrandTotalForRow) {
 		this.showGrandTotalForRow = showGrandTotalForRow;
+	}
+
+	@Override
+	public boolean isAutoCalculate() {
+		return autoCalculate;
+	}
+
+	@Override
+	public void setAutoCalculate(boolean autoCalculate) {
+		this.autoCalculate = autoCalculate;
 	}
 
 	@Override
@@ -301,18 +321,25 @@ public class DefaultPivotModel implements PivotModel {
 	}
 	
 	private Set<Object> getUniqueValues(PivotField field, Map<Integer, Object> filter) {
-		return new TreeSet<Object>(getValues(field, filter));
+		List<Object> values = getValues(field, filter);
+		
+		int sortOrder = field.getSortOrder();
+		if (sortOrder == PivotField.SORT_ORDER_ASCENDING) {
+			return new TreeSet<Object>(values); 
+		} else if (sortOrder == PivotField.SORT_ORDER_DESCENDING) {
+			return new TreeSet<Object>(values).descendingSet();
+		}
+
+		return new LinkedHashSet<Object>(values);
 	}
 
 	private boolean acceptValue(int row, Map<Integer, Object> filter) {
 		boolean accept = true;
 		Set<Integer> keys = filter.keySet();
+		Object value = null;
 		for (int index : keys) {
-			if (!filter.get(index).equals(
-					dataSource.getValueAt(row, fields.get(index)))) {
-				// System.out.println(" + " + filter.get(j));
-				// System.out.println(" - " + dataSource.getValueAt(i,
-				// fields.get(j)));
+			value = dataSource.getValueAt(row, fields.get(index));
+			if (!filter.get(index).equals(value)) {
 				return false;
 			}
 		}

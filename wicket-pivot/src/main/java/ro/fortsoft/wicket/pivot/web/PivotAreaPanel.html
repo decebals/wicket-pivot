@@ -2,12 +2,12 @@
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
     <div wicket:id="name" class="span2 name"></div>
-    <ol wicket:id="fieldsContainer" class="span10 values">
-        <li wicket:id="values" class="value-container">
-            <i class="icon-move initiate" title="Drag"></i>
-            <span wicket:id="value" class="value label"></span>
+    <ol wicket:id="fieldsContainer" class="span10 fields">
+        <li wicket:id="fields" class="field">
+            <span wicket:id="field" data-horizontal-offset="-5" data-vertical-offset="3"></span>
+            <div wicket:id="dropDownPanel"></div>
         </li>
     </ol>
-    <div wicket:id="modal"></div>
+    <div wicket:id="modal"></div>        
 </wicket:panel>
 </html>
