@@ -164,6 +164,7 @@ public class PivotAreaPanel extends Panel {
         template.interpolate(vars);
 
         response.render(OnDomReadyHeaderItem.forScript(template.getString()));
+        
     }
 	
 	public ListView<PivotField> getFieldsView() {
