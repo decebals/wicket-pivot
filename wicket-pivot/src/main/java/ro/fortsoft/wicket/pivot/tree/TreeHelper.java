@@ -55,7 +55,8 @@ public class TreeHelper {
 	
 	public static Node getChild(Node node, Object value) {
 		for (Node child : node.getChildren()) {
-			if (value.equals(child.getData())) {
+			Object data = child.getData();
+			if (value == data || (value != null && value.equals(data))) {
 				return child;
 			}
 		}

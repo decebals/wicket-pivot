@@ -14,13 +14,14 @@ package ro.fortsoft.wicket.pivot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.MultiKeyMap;
@@ -324,10 +325,30 @@ public class DefaultPivotModel implements PivotModel {
 		List<Object> values = getValues(field, filter);
 		
 		int sortOrder = field.getSortOrder();
-		if (sortOrder == PivotField.SORT_ORDER_ASCENDING) {
-			return new TreeSet<Object>(values); 
-		} else if (sortOrder == PivotField.SORT_ORDER_DESCENDING) {
-			return new TreeSet<Object>(values).descendingSet();
+		if (sortOrder != PivotField.SORT_ORDER_UNSORTED) {
+			/*
+			 * We need to get the value set and sort it. We can not use a
+			 * TreeSet here as it does not allow null values.
+			 */
+			Set<Object> valueSet = new HashSet<Object>(values);
+			List<Object> valuesToOrder = new ArrayList<Object>(valueSet);
+			final int sign = sortOrder == PivotField.SORT_ORDER_ASCENDING ? 1
+					: sortOrder == PivotField.SORT_ORDER_DESCENDING ? -1 : 1;
+			Collections.sort(valuesToOrder, new Comparator<Object>() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public int compare(Object o1, Object o2) {
+					if (o1 == o2)
+						return 0;
+					if (o1 == null)
+						return sign * -1;
+					if (o2 == null)
+						return sign * 1;
+					return sign * ((Comparable<Object>) o1).compareTo(o2);
+				}
+			});
+
+			return new LinkedHashSet<Object>(valuesToOrder);
 		}
 
 		return new LinkedHashSet<Object>(values);
@@ -339,7 +360,8 @@ public class DefaultPivotModel implements PivotModel {
 		Object value = null;
 		for (int index : keys) {
 			value = dataSource.getValueAt(row, fields.get(index));
-			if (!filter.get(index).equals(value)) {
+			Object filterValue = filter.get(index);
+			if (filterValue != value && (filterValue == null || !filterValue.equals(value))) {
 				return false;
 			}
 		}
