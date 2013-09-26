@@ -12,6 +12,7 @@
  */
 package ro.fortsoft.wicket.pivot.web;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -164,6 +165,11 @@ public class PivotAreaPanel extends Panel {
         template.interpolate(vars);
 
         response.render(OnDomReadyHeaderItem.forScript(template.getString()));
+        try {
+        	template.close();
+        } catch(IOException e) {
+        	throw new RuntimeException(e);
+        }
     }
 	
 	public ListView<PivotField> getFieldsView() {
