@@ -31,15 +31,20 @@ public class PivotTableRenderModel implements Serializable {
 
 		protected RenderCell() {
 		}
+		
+		public Object getRawValue() {
+			return value;
+		}
 	}
 
 	public static class RowCellValueRenderCell extends RenderCell {
+		private static final long serialVersionUID = 1L;
+
 		public RowCellValueRenderCell(Number cellValue, PivotField dataField) {
 			value = cellValue;
 			this.pivotField = dataField;
 		}
 
-		private static final long serialVersionUID = 1L;
 	}
 
 	public static class GrandTotalValueRenderCell extends RenderCell {
@@ -86,39 +91,65 @@ public class PivotTableRenderModel implements Serializable {
 	}
 
 	public static class GrandTotalRowHeaderRenderCell extends GrandTotalHeaderRenderCell {
+		private static final long serialVersionUID = 1L;
+
 		public GrandTotalRowHeaderRenderCell(String value) {
 			super(value);
 		}
 
-		private static final long serialVersionUID = 1L;
-
 	}
 
-	public static class RenderRow implements Serializable {
+	public static abstract class RenderRow implements Serializable {
 		private static final long serialVersionUID = 1L;
+
+		public abstract List<RenderCell> getRenderCells();
 	}
 
 	public static class HeaderRenderRow extends RenderRow {
 		private static final long serialVersionUID = 1L;
-		List<RenderCell> rowHeader = new ArrayList<RenderCell>();
-		List<RenderCell> value = new ArrayList<RenderCell>();
-		List<RenderCell> grandTotalColumn = new ArrayList<RenderCell>();
+		private List<RenderCell> rowHeader = new ArrayList<RenderCell>();
+		private List<RenderCell> value = new ArrayList<RenderCell>();
+		private List<RenderCell> grandTotalColumn = new ArrayList<RenderCell>();
+
+		@Override
+		public List<RenderCell> getRenderCells() {
+			List<RenderCell> ret = new ArrayList<RenderCell>();
+			ret.addAll(rowHeader);
+			ret.addAll(value);
+			ret.addAll(grandTotalColumn);
+			return ret;
+		}
 	}
 
 	public static class RowRenderRow extends RenderRow {
 		private static final long serialVersionUID = 1L;
 		List<RenderCell> rowHeader = new ArrayList<RenderCell>();
 		List<RenderCell> value = new ArrayList<RenderCell>();
+
+		@Override
+		public List<RenderCell> getRenderCells() {
+			List<RenderCell> ret = new ArrayList<RenderCell>();
+			ret.addAll(rowHeader);
+			ret.addAll(value);
+			return ret;
+		}
 	}
 
 	public static class GrandTotalRenderRow extends RowRenderRow {
 		private static final long serialVersionUID = 1L;
-
 	}
 
 	private List<RenderRow> column;
 	private List<RenderRow> row;
 	private List<RenderRow> grandTotalRow;
+
+	public List<RenderRow> getAllRenderRows() {
+		List<RenderRow> ret = new ArrayList<RenderRow>();
+		ret.addAll(column);
+		ret.addAll(row);
+		ret.addAll(grandTotalRow);
+		return ret;
+	}
 
 	public void calculate(PivotModel pivotModel) {
 		spanCache = new HashMap<List<Object>, Integer>();
@@ -306,5 +337,4 @@ public class PivotTableRenderModel implements Serializable {
 		}
 		return span;
 	}
-
 }
