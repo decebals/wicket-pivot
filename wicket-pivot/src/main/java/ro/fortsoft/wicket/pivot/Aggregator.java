@@ -77,6 +77,11 @@ public abstract class Aggregator implements Serializable {
 		
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {	
+		return getFunction().hashCode();
+	}
 
     public static class Sum extends Aggregator {
     	
