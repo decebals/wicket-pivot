@@ -77,6 +77,11 @@ public abstract class Aggregator implements Serializable {
 		
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {	
+		return getFunction().hashCode();
+	}
 
     public static class Sum extends Aggregator {
     	
@@ -84,13 +89,15 @@ public abstract class Aggregator implements Serializable {
         
 		private double total;
 
+		@Override
 		public Aggregator init() {
 			total = 0.0;
 			
 			return this;
 		}
 
-        public Aggregator add(Object value) {
+        @Override
+		public Aggregator add(Object value) {
             if (value instanceof Number) {
             	total += ((Number) value).doubleValue();
             }
@@ -98,10 +105,12 @@ public abstract class Aggregator implements Serializable {
             return this;
         }
 
-        public Object getResult() {
+        @Override
+		public Object getResult() {
             return new Double(total);
         }
 
+		@Override
 		public String getFunction() {
 			return SUM;
 		}
@@ -115,6 +124,7 @@ public abstract class Aggregator implements Serializable {
         private double total;
         private double count;
 
+		@Override
 		public Aggregator init() {
 			total = 0.0;
 			count = 0.0;
@@ -122,7 +132,8 @@ public abstract class Aggregator implements Serializable {
 			return this;
 		}
 
-        public Aggregator add(Object value) {
+        @Override
+		public Aggregator add(Object value) {
             if (value instanceof Number) {
                 total += ((Number) value).doubleValue();
                 count++;
@@ -131,7 +142,8 @@ public abstract class Aggregator implements Serializable {
             return this;
         }
 
-        public Object getResult() {
+        @Override
+		public Object getResult() {
             if (count == 0.0) {
             	return null;
             }
@@ -139,6 +151,7 @@ public abstract class Aggregator implements Serializable {
             return new Double(total / count);
         }
 
+		@Override
 		public String getFunction() {
 			return AVG;
 		}
@@ -151,13 +164,15 @@ public abstract class Aggregator implements Serializable {
         
         private Object min;
 
+		@Override
 		public Aggregator init() {
 			min = null;
 			
 			return this;
 		}
 
-        @SuppressWarnings("unchecked")
+        @Override
+		@SuppressWarnings("unchecked")
 		public Aggregator add(Object value) {
             if (value != null) {
                 if (min == null) {
@@ -172,10 +187,12 @@ public abstract class Aggregator implements Serializable {
             return this;
         }
 
-        public Object getResult() {
+        @Override
+		public Object getResult() {
             return min;
         }
 
+		@Override
 		public String getFunction() {
 			return MIN;
 		}
@@ -188,13 +205,15 @@ public abstract class Aggregator implements Serializable {
         
         private Object max;
 
+		@Override
 		public Aggregator init() {
 			max = null;
 			
 			return this;
 		}
 
-        @SuppressWarnings("unchecked")
+        @Override
+		@SuppressWarnings("unchecked")
 		public Aggregator add(Object value) {
             if (value != null) {
                 if (max == null) {
@@ -209,10 +228,12 @@ public abstract class Aggregator implements Serializable {
             return this;
         }
 
-        public Object getResult() {
+        @Override
+		public Object getResult() {
             return max;
         }
 
+		@Override
 		public String getFunction() {
 			return MAX;
 		}
@@ -225,13 +246,15 @@ public abstract class Aggregator implements Serializable {
         
         private int count;
 
+		@Override
 		public Aggregator init() {
 			count = 0;
 			
 			return this;
 		}
 
-        public Aggregator add(Object value) {
+        @Override
+		public Aggregator add(Object value) {
             if (value != null) {
             	count++;
             }
@@ -239,10 +262,12 @@ public abstract class Aggregator implements Serializable {
             return this;
         }
 
-        public Object getResult() {
+        @Override
+		public Object getResult() {
             return new Integer(count);
         }
 
+		@Override
 		public String getFunction() {
 			return COUNT;
 		}

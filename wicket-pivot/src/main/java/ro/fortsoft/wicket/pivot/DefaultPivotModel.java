@@ -206,6 +206,7 @@ public class DefaultPivotModel implements PivotModel {
 		return TreeHelper.getLeafValues(getColumnsHeaderTree().getRoot());
 	}
 
+	@Override
 	public Object getValueAt(PivotField dataField, List<Object> rowKey, List<Object> columnKey) {
 		int index = getFields(PivotField.Area.DATA).indexOf(dataField);
 		return calculatedData.get(index).get(rowKey, columnKey);
