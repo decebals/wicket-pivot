@@ -24,21 +24,20 @@ public class PivotCsvExporter {
 		for (RenderRow row : renderModel.getAllRenderRows()) {
 			int col = 0;
 			for (RenderCell cell : row.getRenderCells()) {
-
 				/*
 				 * Check if we currently have a rowspan at this column from the
 				 * parent row. We only support a colspan of 1 at the moment
-				 * hier, if rowspan > 1
+				 * here, if rowspan > 1
 				 */
 				Integer rowSpan = rowSpanMap.get(col);
 				if (rowSpan != null) {
 					rowSpan--;
-					col++;
-					out.append(seperator);
 					if (rowSpan == 0)
 						rowSpanMap.remove(col);
 					else
 						rowSpanMap.put(col, rowSpan);
+					col++;
+					out.append(seperator);
 				}
 
 				/*
@@ -50,17 +49,20 @@ public class PivotCsvExporter {
 				out.append(seperator);
 				if (cell.rowspan > 1)
 					rowSpanMap.put(col, cell.rowspan - 1);
+				col++;
 
 				/*
 				 * We only support colspan _OR_ rowspan. The current PivotTable
 				 * also doesnt have rowspan and colspan at the same time.
 				 */
-				for (int i = 1; i < cell.colspan; i++)
+				for (int i = 1; i < cell.colspan; i++) {
 					out.append(seperator);
-				col++;
+					col++;
+				}
 			}
 			out.append("\n");
 		}
+		out.flush();
 	}
 
 	public void setSeperator(String seperator) {

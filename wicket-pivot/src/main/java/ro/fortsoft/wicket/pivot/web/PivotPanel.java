@@ -12,20 +12,27 @@
  */
 package ro.fortsoft.wicket.pivot.web;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceRequestHandler;
+import org.apache.wicket.request.resource.ByteArrayResource;
 
 import ro.fortsoft.wicket.pivot.DefaultPivotFieldActionsFactory;
 import ro.fortsoft.wicket.pivot.DefaultPivotModel;
@@ -45,8 +52,10 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 	private PivotModel pivotModel;
 	private PivotTable pivotTable;
 	private AjaxLink<Void> computeLink;
+	private Component downloadCSV;
 	// TODO: requires Serializable?!
 	private PivotFieldActionsFactory pivotFieldActionsFactory;
+
 
 	public PivotPanel(String id, PivotDataSource pivotDataSource) {
 		super(id, Model.of(pivotDataSource));
@@ -148,6 +157,36 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 			
 		}));
 		add(computeLink);
+		
+		downloadCSV = new Link<Void>("downloadCSV") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick() {
+				pivotModel.calculate();
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				PivotCsvExporter exporter = new PivotCsvExporter();
+				try {
+					exporter.exportPivot(getPivotModel(), out);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+				RequestCycle.get().scheduleRequestHandlerAfterCurrent(
+						new ResourceRequestHandler(new ByteArrayResource("text/csv", out.toByteArray(), "pivot.csv"),
+								null));
+			}
+		};
+		downloadCSV.setOutputMarkupPlaceholderTag(true);
+		downloadCSV.add(AttributeModifier.append("class", new AbstractReadOnlyModel<String>() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String getObject() {
+				return verify() ? "btn-success" : "btn-success disabled";
+			}
+			
+		}));
+		add(downloadCSV);
 		
 		add(new PivotResourcesBehavior());
 	}

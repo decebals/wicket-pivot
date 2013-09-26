@@ -31,7 +31,7 @@ public class PivotTableRenderModel implements Serializable {
 
 		protected RenderCell() {
 		}
-		
+
 		public Object getRawValue() {
 			return value;
 		}
@@ -69,7 +69,8 @@ public class PivotTableRenderModel implements Serializable {
 
 		public HeaderRenderCell(PivotField pivotField) {
 			this.pivotField = pivotField;
-			value = pivotField.getTitle();
+			if (pivotField != null)
+				value = pivotField.getTitle();
 		}
 	}
 
