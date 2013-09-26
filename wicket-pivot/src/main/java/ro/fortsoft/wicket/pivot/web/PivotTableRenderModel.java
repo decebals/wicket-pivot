@@ -49,9 +49,11 @@ public class PivotTableRenderModel implements Serializable {
 
 	public static class GrandTotalValueRenderCell extends RenderCell {
 		private static final long serialVersionUID = 1L;
+		boolean forRow;
 
-		public GrandTotalValueRenderCell(double grandTotalForRow) {
+		public GrandTotalValueRenderCell(double grandTotalForRow, boolean forRow) {
 			value = grandTotalForRow;
+			this.forRow = forRow;
 		}
 	}
 
@@ -108,7 +110,7 @@ public class PivotTableRenderModel implements Serializable {
 
 	public static class HeaderRenderRow extends RenderRow {
 		private static final long serialVersionUID = 1L;
-		private List<RenderCell> rowHeader = new ArrayList<RenderCell>();
+		private List<HeaderRenderCell> rowHeader = new ArrayList<HeaderRenderCell>();
 		private List<RenderCell> value = new ArrayList<RenderCell>();
 		private List<RenderCell> grandTotalColumn = new ArrayList<RenderCell>();
 
@@ -120,11 +122,23 @@ public class PivotTableRenderModel implements Serializable {
 			ret.addAll(grandTotalColumn);
 			return ret;
 		}
+
+		public List<HeaderRenderCell> getRowHeader() {
+			return rowHeader;
+		}
+
+		public List<RenderCell> getValueCells() {
+			return value;
+		}
+
+		public List<RenderCell> getGrandTotalColumn() {
+			return grandTotalColumn;
+		}
 	}
 
 	public static class RowRenderRow extends RenderRow {
 		private static final long serialVersionUID = 1L;
-		List<RenderCell> rowHeader = new ArrayList<RenderCell>();
+		List<RowHeaderRenderCell> rowHeader = new ArrayList<RowHeaderRenderCell>();
 		List<RenderCell> value = new ArrayList<RenderCell>();
 
 		@Override
@@ -136,13 +150,35 @@ public class PivotTableRenderModel implements Serializable {
 		}
 	}
 
-	public static class GrandTotalRenderRow extends RowRenderRow {
+	public static class GrandTotalRenderRow extends RenderRow {
 		private static final long serialVersionUID = 1L;
+		List<GrandTotalRowHeaderRenderCell> rowHeader = new ArrayList<GrandTotalRowHeaderRenderCell>();
+		List<GrandTotalValueRenderCell> value = new ArrayList<GrandTotalValueRenderCell>();
+
+		@Override
+		public List<RenderCell> getRenderCells() {
+			List<RenderCell> ret = new ArrayList<RenderCell>();
+			ret.addAll(rowHeader);
+			ret.addAll(value);
+			return ret;
+		}
 	}
 
-	private List<RenderRow> column;
-	private List<RenderRow> row;
-	private List<RenderRow> grandTotalRow;
+	private List<HeaderRenderRow> column;
+	private List<RowRenderRow> row;
+	private List<GrandTotalRenderRow> grandTotalRow;
+
+	public List<HeaderRenderRow> getHeaderRows() {
+		return column;
+	}
+
+	public List<RowRenderRow> getValueRows() {
+		return row;
+	}
+
+	public List<GrandTotalRenderRow> getGrandTotalRows() {
+		return grandTotalRow;
+	}
 
 	public List<RenderRow> getAllRenderRows() {
 		List<RenderRow> ret = new ArrayList<RenderRow>();
@@ -154,9 +190,9 @@ public class PivotTableRenderModel implements Serializable {
 
 	public void calculate(PivotModel pivotModel) {
 		spanCache = new HashMap<List<Object>, Integer>();
-		column = new ArrayList<RenderRow>();
-		row = new ArrayList<RenderRow>();
-		grandTotalRow = new ArrayList<RenderRow>();
+		column = new ArrayList<HeaderRenderRow>();
+		row = new ArrayList<RowRenderRow>();
+		grandTotalRow = new ArrayList<GrandTotalRenderRow>();
 
 		List<PivotField> columnFields = pivotModel.getFields(PivotField.Area.COLUMN);
 		List<PivotField> rowFields = pivotModel.getFields(PivotField.Area.ROW);
@@ -282,9 +318,8 @@ public class PivotTableRenderModel implements Serializable {
 				}
 				for (PivotField dataField : dataFields) {
 					double grandTotalForRow = PivotUtils.getSummary(dataField, values.get(dataField)).doubleValue();
-					GrandTotalValueRenderCell cell = new GrandTotalValueRenderCell(grandTotalForRow);
+					GrandTotalValueRenderCell cell = new GrandTotalValueRenderCell(grandTotalForRow, true);
 					tr.value.add(cell);
-
 				}
 			}
 		}
@@ -313,12 +348,12 @@ public class PivotTableRenderModel implements Serializable {
 						grandTotal.put(dataField, grandTotal.get(dataField) + grandTotalForColumn);
 					}
 
-					tr.value.add(new GrandTotalValueRenderCell(grandTotalForColumn));
+					tr.value.add(new GrandTotalValueRenderCell(grandTotalForColumn, false));
 				}
 			}
 			if (!columnFields.isEmpty() && pivotModel.isShowGrandTotalForRow()) {
 				for (PivotField dataField : dataFields) {
-					tr.value.add(new GrandTotalValueRenderCell(grandTotal.get(dataField)));
+					tr.value.add(new GrandTotalValueRenderCell(grandTotal.get(dataField), true));
 				}
 			}
 		}

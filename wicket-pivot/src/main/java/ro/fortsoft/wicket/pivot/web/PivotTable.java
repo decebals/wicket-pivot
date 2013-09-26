@@ -13,10 +13,6 @@
 package ro.fortsoft.wicket.pivot.web;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -25,14 +21,21 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.collections.MultiMap;
 import org.apache.wicket.util.convert.IConverter;
 
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotModel;
-import ro.fortsoft.wicket.pivot.PivotUtils;
-import ro.fortsoft.wicket.pivot.tree.Node;
-import ro.fortsoft.wicket.pivot.tree.TreeHelper;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalHeaderRenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalRenderRow;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalRowHeaderRenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalValueRenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.HeaderRenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.HeaderRenderRow;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.HeaderValueRenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RowCellValueRenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RowHeaderRenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RowRenderRow;
 
 /**
  * @author Decebal Suiu
@@ -41,220 +44,162 @@ public class PivotTable extends GenericPanel<PivotModel> {
 
 	private static final long serialVersionUID = 1L;
 
-	private Map<List<Object>, Integer> spanCache;
-	
 	public PivotTable(String id, PivotModel pivotModel) {
 		super(id, Model.of(pivotModel));
+	}
+
+	private Component applyRowColSpan(RenderCell cell, Component tmp) {
+		if (cell.colspan > 1)
+			tmp.add(AttributeModifier.append("colspan", cell.colspan));
+		if (cell.rowspan > 1)
+			tmp.add(AttributeModifier.append("rowspan", cell.rowspan));
+		return tmp;
 	}
 
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
 
-		spanCache = new HashMap<List<Object>, Integer>();
-
 		PivotModel pivotModel = getModelObject();
-		
-		List<PivotField> columnFields = pivotModel.getFields(PivotField.Area.COLUMN);
-		List<PivotField> rowFields = pivotModel.getFields(PivotField.Area.ROW);
-		List<PivotField> dataFields = pivotModel.getFields(PivotField.Area.DATA);
-		
-		int columnFieldsSize = columnFields.size();
-		int rowFieldsSize = rowFields.size();
-		int dataFieldsSize = dataFields.size();
-		
-		List<List<Object>> rowKeys = pivotModel.getRowKeys();
-//		System.out.println("rowKeys = " + rowKeys);
-		List<List<Object>> columnKeys = pivotModel.getColumnKeys();
-//		System.out.println("columnKeys = " + columnKeys);
-		
+		PivotTableRenderModel renderModel = new PivotTableRenderModel();
+		renderModel.calculate(pivotModel);
+
 		// rendering header
 		RepeatingView column = new RepeatingView("header");
 		add(column);
-		int headerRowCount = columnFieldsSize;
-		if (headerRowCount == 0) {
-			headerRowCount = 1;
-		}
-		if ((dataFieldsSize > 1) && (columnFieldsSize > 0)) {
-			// add an extra row (the row with data field titles)
-			headerRowCount++;
-		}
-		
+
 		Component tmp = null;
-		for (int i = 0; i < headerRowCount; i++) {
+		for (HeaderRenderRow row : renderModel.getHeaderRows()) {
 			// rendering row header (first columns)
 			WebMarkupContainer tr = new WebMarkupContainer(column.newChildId());
 			column.add(tr);
 			RepeatingView rowHeader = new RepeatingView("rowHeader");
 			tr.add(rowHeader);
-			
-			for (int j = 0; j < rowFieldsSize; j++) {
-				if (i < headerRowCount - 1) {
+
+			for (HeaderRenderCell cell : row.getRowHeader()) {
+				if (cell.pivotField == null) {
 					// rendering an empty cell
 					tmp = new Label(rowHeader.newChildId(), "");
 					tmp.add(AttributeModifier.append("class", "empty"));
+					applyRowColSpan(cell, tmp);
 					rowHeader.add(tmp);
 				} else {
 					// rendering row field
-					tmp = createTitleLabel(rowHeader.newChildId(), rowFields.get(j));
+					tmp = createTitleLabel(rowHeader.newChildId(), cell.pivotField);
+					applyRowColSpan(cell, tmp);
 					rowHeader.add(tmp);
 				}
 			}
-			
+
 			// rendering column keys
 			RepeatingView value = new RepeatingView("value");
 			tr.add(value);
-			Node columnsRoot = pivotModel.getColumnsHeaderTree().getRoot();
-			List<List<Object>> pathRenderedCache = new ArrayList<List<Object>>();
-			for (List<Object> columnKey : columnKeys) {
-//				System.out.println(">>> " + columnKey);
-				if (i < columnFieldsSize) {
-					PivotField columnField = columnFields.get(i);
-//					System.out.println("+++ " + columnKey.get(i) + " <<< " + i);
-					List<Object> path = new ArrayList<Object>(columnKey.subList(0, i + 1));
-//					System.out.println("columnPath = " + path);
-					int colspan = getSpan(columnsRoot, path);
-//					System.out.println("### colspan = " + colspan);
-					tmp = createValueLabel(value.newChildId(), columnKey.get(i), columnField);
-					colspan = colspan * dataFieldsSize;
-					tmp.add(AttributeModifier.append("colspan", colspan));
+			for (RenderCell cell : row.getValueCells()) {
+				if (cell instanceof HeaderValueRenderCell) {
+					HeaderValueRenderCell headerValueRenderCell = (HeaderValueRenderCell) cell;
+					tmp = createValueLabel(value.newChildId(), headerValueRenderCell.getRawValue(),
+							headerValueRenderCell.pivotField);
+					applyRowColSpan(cell, tmp);
 					value.add(tmp);
-					// TODO optimization (create an emptyPanel is more optimal)
-					if (pathRenderedCache.contains(path)) {
-						tmp.setVisible(false);
-					} else {
-						pathRenderedCache.add(path);
-					}
 				} else {
-					for (PivotField dataField : dataFields) {
-						tmp = createTitleLabel(value.newChildId(), dataField);
-						value.add(tmp);
-					}
+					HeaderRenderCell headerRenderCell = (HeaderRenderCell) cell;
+					tmp = createTitleLabel(value.newChildId(), headerRenderCell.pivotField);
+					applyRowColSpan(cell, tmp);
+					value.add(tmp);
 				}
 			}
-			
+
 			// rendering grand total column
 			RepeatingView grandTotalColumn = new RepeatingView("grandTotalColumn");
-			if (i == 0) {
-				tmp = new Label(grandTotalColumn.newChildId(), "Grand Total");
-				tmp.add(AttributeModifier.append("colspan", dataFieldsSize));
-				grandTotalColumn.add(tmp);
-			} else if (i < columnFieldsSize) {
-				tmp = new WebMarkupContainer(grandTotalColumn.newChildId());
-				tmp.add(AttributeModifier.append("colspan", dataFieldsSize));
-				tmp.add(AttributeModifier.append("class", "empty"));
-				grandTotalColumn.add(tmp);
-			} else {
-				for (PivotField dataField : dataFields) {
-					tmp = createTitleLabel(value.newChildId(), dataField);
+			for (RenderCell cell : row.getGrandTotalColumn()) {
+				if (cell instanceof GrandTotalHeaderRenderCell) {
+					GrandTotalHeaderRenderCell grandTotalHeaderRenderCell = (GrandTotalHeaderRenderCell) cell;
+					if (grandTotalHeaderRenderCell.getRawValue() != null) {
+						tmp = new Label(grandTotalColumn.newChildId(), grandTotalHeaderRenderCell.getRawValue()
+								.toString());
+						applyRowColSpan(cell, tmp);
+						grandTotalColumn.add(tmp);
+					} else {
+						tmp = new WebMarkupContainer(grandTotalColumn.newChildId());
+						applyRowColSpan(cell, tmp);
+						tmp.add(AttributeModifier.append("class", "empty"));
+						grandTotalColumn.add(tmp);
+					}
+				} else {
+					HeaderRenderCell headerCell = (HeaderRenderCell) cell;
+					tmp = createTitleLabel(value.newChildId(), headerCell.pivotField);
+					applyRowColSpan(cell, tmp);
 					grandTotalColumn.add(tmp);
-				}				
+				}
 			}
-			grandTotalColumn.setVisible(!columnFields.isEmpty() && pivotModel.isShowGrandTotalForRow());
+			grandTotalColumn.setVisible(row.getGrandTotalColumn().size() > 0);
 			tr.add(grandTotalColumn);
 		}
-		
+
 		// rendering rows
 		RepeatingView row = new RepeatingView("row");
 		add(row);
-		Node rowsRoot = pivotModel.getRowsHeaderTree().getRoot();
-		List<List<Object>> pathRenderedCache = new ArrayList<List<Object>>();
-		for (List<Object> rowKey : rowKeys) {
+		for (RowRenderRow renderRow : renderModel.getValueRows()) {
 			WebMarkupContainer tr = new WebMarkupContainer(row.newChildId());
 			row.add(tr);
 			RepeatingView rowHeader = new RepeatingView("rowHeader");
 			tr.add(rowHeader);
 
-			for (int k = 0; k < rowKey.size(); k++) {
-				List<Object> path = new ArrayList<Object>(rowKey.subList(0, k + 1));
-//				System.out.println("rowPath = " + path);
-				int rowspan = getSpan(rowsRoot, path);
-//				System.out.println("### rowspan = " + rowspan);
-
-				PivotField rowField = rowFields.get(k);
-				tmp = createValueLabel(rowHeader.newChildId(), rowKey.get(k), rowField);
-				tmp.add(AttributeModifier.append("rowspan", rowspan));
+			for (RowHeaderRenderCell cell : renderRow.rowHeader) {
+				tmp = createValueLabel(rowHeader.newChildId(), cell.getRawValue(), cell.pivotField);
+				applyRowColSpan(cell, tmp);
 				rowHeader.add(tmp);
-				
-				// TODO optimization (create an emptyPanel is more optimal)
-				if (pathRenderedCache.contains(path)) {
-					tmp.setVisible(false);
-				} else {
-					pathRenderedCache.add(path);
-				}
 			}
-			
+
 			RepeatingView value = new RepeatingView("value");
 			tr.add(value);
-			
-			for (List<Object> columnKey : columnKeys) {
-				for (PivotField dataField : dataFields) {
-					Number cellValue = (Number) pivotModel.getValueAt(dataField, rowKey, columnKey);
-					tmp = createValueLabel(value.newChildId(), cellValue, dataField);				
-					value.add(tmp);					
-				}
-			}
-				
-			if (!columnFields.isEmpty() && pivotModel.isShowGrandTotalForRow()) {
-				MultiMap<PivotField, Object> values = new MultiMap<PivotField, Object>();
-				for (List<Object> columnKey: columnKeys) {
-					for (PivotField dataField : dataFields) {
-						values.addValue(dataField, pivotModel.getValueAt(dataField, rowKey, columnKey));
-					}
-				}
-				for (PivotField dataField : dataFields) {
-					double grandTotalForRow = PivotUtils.getSummary(dataField, values.get(dataField)).doubleValue();
-					tmp = createGrandTotalLabel(value.newChildId(), grandTotalForRow, true);
+
+			for (RenderCell cell : renderRow.value) {
+				if (cell instanceof RowCellValueRenderCell) {
+					tmp = createValueLabel(value.newChildId(), cell.getRawValue(), cell.pivotField);
+					applyRowColSpan(cell, tmp);
+					value.add(tmp);
+				} else {
+					GrandTotalValueRenderCell grandTotalCell = (GrandTotalValueRenderCell) cell;
+					tmp = createGrandTotalLabel(value.newChildId(), grandTotalCell.getRawValue(), grandTotalCell.forRow);
+					applyRowColSpan(cell, tmp);
 					tmp.add(AttributeModifier.append("class", "grand-total"));
 					value.add(tmp);
 				}
 			}
 		}
-		
+
 		WebMarkupContainer grandTotalRow = new WebMarkupContainer("grandTotalRow");
-		grandTotalRow.setVisible(!rowFields.isEmpty() && pivotModel.isShowGrandTotalForColumn());
+		grandTotalRow.setVisible(renderModel.getGrandTotalRows().size() > 0);
 		add(grandTotalRow);
-		
-		Label grandTotalRowHeader = new Label("rowHeader", "Grand Total");
-		grandTotalRowHeader.add(AttributeModifier.append("colspan", rowFieldsSize));
-		grandTotalRow.add(grandTotalRowHeader);
-		
-		RepeatingView value = new RepeatingView("value");
-		grandTotalRow.add(value);
-		Map<PivotField, Double> grandTotal = new HashMap<PivotField, Double>();
-		for (List<Object> columnKey : columnKeys) {
-			MultiMap<PivotField, Object> values = new MultiMap<PivotField, Object>();
-			for (List<Object> rowKey: rowKeys) {
-				for (PivotField dataField : dataFields) {
-					values.addValue(dataField, pivotModel.getValueAt(dataField, rowKey, columnKey));
-				}
+		/*
+		 * We currently expect exactly one GrantTotalRenderRow, therefor we dont
+		 * need a repeating viewer
+		 */
+		for (GrandTotalRenderRow grantTotalRenderRow : renderModel.getGrandTotalRows()) {
+			for (GrandTotalRowHeaderRenderCell cell : grantTotalRenderRow.rowHeader) {
+				Label grandTotalRowHeader = new Label("rowHeader", "Grand Total");
+				applyRowColSpan(cell, grandTotalRowHeader);
+				grandTotalRow.add(grandTotalRowHeader);
 			}
-			for (PivotField dataField : dataFields) {
-				double grandTotalForColumn = PivotUtils.getSummary(dataField, values.get(dataField)).doubleValue();
-				if (!grandTotal.containsKey(dataField)) {
-					grandTotal.put(dataField, grandTotalForColumn);
-				} else {
-					grandTotal.put(dataField, grandTotal.get(dataField) + grandTotalForColumn);
-				}
-				tmp = createGrandTotalLabel(value.newChildId(), grandTotalForColumn, false);
-				value.add(tmp);
-			}
-		}
-		if (!columnFields.isEmpty() && pivotModel.isShowGrandTotalForRow()) {
-			for (PivotField dataField : dataFields) {
-				tmp = createGrandTotalLabel(value.newChildId(), grandTotal.get(dataField), true);
+
+			RepeatingView value = new RepeatingView("value");
+			grandTotalRow.add(value);
+			for (GrandTotalValueRenderCell cell : grantTotalRenderRow.value) {
+				tmp = createGrandTotalLabel(value.newChildId(), cell.getRawValue(), cell.forRow);
 				value.add(tmp);
 			}
 		}
 	}
 
 	/**
-	 * Retrieves a name that display the pivot table title (for fields on ROW and DATA areas) 
+	 * Retrieves a name that display the pivot table title (for fields on ROW
+	 * and DATA areas)
 	 */
 	protected Label createTitleLabel(String id, PivotField pivotField) {
 		String title = pivotField.getTitle();
 		if (pivotField.getArea().equals(PivotField.Area.DATA)) {
-			title += " (" + pivotField.getAggregator().getFunction().toUpperCase() + ")"; 
+			title += " (" + pivotField.getAggregator().getFunction().toUpperCase() + ")";
 		}
 
 		return new Label(id, title);
@@ -262,7 +207,6 @@ public class PivotTable extends GenericPanel<PivotModel> {
 
 	protected Label createValueLabel(String id, Object value, final PivotField pivotField) {
 		return new Label(id, Model.of((Serializable) value)) {
-			
 			private static final long serialVersionUID = 1L;
 
 			@SuppressWarnings("unchecked")
@@ -272,31 +216,14 @@ public class PivotTable extends GenericPanel<PivotModel> {
 				if (converter != null) {
 					return converter;
 				}
-				
+
 				return super.getConverter(type);
 			}
 
 		};
 	}
-	
+
 	protected Label createGrandTotalLabel(String id, Object value, boolean forRow) {
 		return new Label(id, Model.of((Serializable) value));
 	}
-
-	private int getSpan(Node root, List<Object> path) {
-		if (spanCache.containsKey(path)) {
-			return spanCache.get(path);
-		}
-		
-		// quick and dirty
-		Node node = TreeHelper.getNode(root, path);
-		
-		int span = 1;
-		if (!node.isLeaf()) {
-			span = TreeHelper.getLeafs(node).size();
-		}
-		
-		return span;
-	}
-		
 }
