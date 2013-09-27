@@ -24,9 +24,14 @@ import ro.fortsoft.wicket.pivot.PivotTableRenderModel;
 import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderCell;
 import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderRow;
 
-public class PivotCsvExporter {
+/**
+ * Basic CSV exporter
+ */
+public class PivotCsvExporter implements PivotExporter {	
+	private static final long serialVersionUID = 1L;
 	private String seperator = ";";
 
+	@Override	
 	public void exportPivot(PivotModel pivotModel, OutputStream outputStream) throws IOException {
 		PivotTableRenderModel renderModel = PivotTableRenderModel.create(pivotModel);
 
@@ -79,5 +84,20 @@ public class PivotCsvExporter {
 
 	public void setSeperator(String seperator) {
 		this.seperator = seperator;
+	}
+
+	@Override
+	public String getFormatName() {
+		return "CSV";
+	}
+
+	@Override
+	public String getFormatMimetype() {
+		return "text/csv";
+	}
+
+	@Override
+	public String getFilenameExtension() {
+		return null;
 	}
 }
