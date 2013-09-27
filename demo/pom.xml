@@ -53,6 +53,11 @@
             <artifactId>wicket-pivot</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>ro.fortsoft.wicket.pivot</groupId>
+            <artifactId>wicket-pivot-exporter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         
         <!-- Derby jdbc driver -->
 		<dependency>
