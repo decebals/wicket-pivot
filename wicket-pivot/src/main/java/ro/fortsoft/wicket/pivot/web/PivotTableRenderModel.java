@@ -49,10 +49,10 @@ public class PivotTableRenderModel implements Serializable {
 		}
 	}
 
-	public static class RowCellValueRenderCell extends RenderCell {
+	public static class RowValueRenderCell extends RenderCell {
 		private static final long serialVersionUID = 1L;
 
-		public RowCellValueRenderCell(Number cellValue, PivotField dataField) {
+		public RowValueRenderCell(Number cellValue, PivotField dataField) {
 			value = cellValue;
 			this.pivotField = dataField;
 		}
@@ -148,7 +148,7 @@ public class PivotTableRenderModel implements Serializable {
 		}
 	}
 
-	public static class RowRenderRow extends RenderRow {
+	public static class DataRenderRow extends RenderRow {
 		private static final long serialVersionUID = 1L;
 		List<RowHeaderRenderCell> rowHeader = new ArrayList<RowHeaderRenderCell>();
 		List<RenderCell> value = new ArrayList<RenderCell>();
@@ -177,14 +177,14 @@ public class PivotTableRenderModel implements Serializable {
 	}
 
 	private List<HeaderRenderRow> column;
-	private List<RowRenderRow> row;
+	private List<DataRenderRow> row;
 	private List<GrandTotalRenderRow> grandTotalRow;
 
 	public List<HeaderRenderRow> getHeaderRows() {
 		return column;
 	}
 
-	public List<RowRenderRow> getValueRows() {
+	public List<DataRenderRow> getValueRows() {
 		return row;
 	}
 
@@ -203,7 +203,7 @@ public class PivotTableRenderModel implements Serializable {
 	public void calculate(PivotModel pivotModel) {
 		spanCache = new HashMap<List<Object>, Integer>();
 		column = new ArrayList<HeaderRenderRow>();
-		row = new ArrayList<RowRenderRow>();
+		row = new ArrayList<DataRenderRow>();
 		grandTotalRow = new ArrayList<GrandTotalRenderRow>();
 
 		List<PivotField> columnFields = pivotModel.getFields(PivotField.Area.COLUMN);
@@ -294,7 +294,7 @@ public class PivotTableRenderModel implements Serializable {
 		Node rowsRoot = pivotModel.getRowsHeaderTree().getRoot();
 		List<List<Object>> pathRenderedCache = new ArrayList<List<Object>>();
 		for (List<Object> rowKey : rowKeys) {
-			RowRenderRow tr = new RowRenderRow();
+			DataRenderRow tr = new DataRenderRow();
 			row.add(tr);
 
 			for (int k = 0; k < rowKey.size(); k++) {
@@ -317,7 +317,7 @@ public class PivotTableRenderModel implements Serializable {
 			for (List<Object> columnKey : columnKeys) {
 				for (PivotField dataField : dataFields) {
 					Number cellValue = (Number) pivotModel.getValueAt(dataField, rowKey, columnKey);
-					tr.value.add(new RowCellValueRenderCell(cellValue, dataField));
+					tr.value.add(new RowValueRenderCell(cellValue, dataField));
 				}
 			}
 
