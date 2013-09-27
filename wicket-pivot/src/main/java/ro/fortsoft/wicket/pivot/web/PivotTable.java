@@ -61,8 +61,7 @@ public class PivotTable extends GenericPanel<PivotModel> {
 		super.onInitialize();
 
 		PivotModel pivotModel = getModelObject();
-		PivotTableRenderModel renderModel = new PivotTableRenderModel();
-		renderModel.calculate(pivotModel);
+		PivotTableRenderModel renderModel =	PivotTableRenderModel.create(pivotModel);
 
 		// rendering header
 		RepeatingView column = new RepeatingView("header");

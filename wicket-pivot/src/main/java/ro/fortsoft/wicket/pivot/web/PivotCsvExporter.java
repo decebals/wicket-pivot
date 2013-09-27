@@ -27,8 +27,7 @@ public class PivotCsvExporter {
 	private String seperator = ";";
 
 	public void exportPivot(PivotModel pivotModel, OutputStream outputStream) throws IOException {
-		PivotTableRenderModel renderModel = new PivotTableRenderModel();
-		renderModel.calculate(pivotModel);
+		PivotTableRenderModel renderModel = PivotTableRenderModel.create(pivotModel);
 
 		OutputStreamWriter out = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
 		Map<Integer, Integer> rowSpanMap = new HashMap<Integer, Integer>();

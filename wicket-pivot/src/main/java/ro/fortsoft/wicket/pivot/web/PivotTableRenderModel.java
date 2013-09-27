@@ -32,6 +32,10 @@ import ro.fortsoft.wicket.pivot.tree.TreeHelper;
  */
 public class PivotTableRenderModel implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+	private PivotTableRenderModel() {
+	}
+
 	private Map<List<Object>, Integer> spanCache;
 
 	public static abstract class RenderCell implements Serializable {
@@ -200,7 +204,13 @@ public class PivotTableRenderModel implements Serializable {
 		return ret;
 	}
 
-	public void calculate(PivotModel pivotModel) {
+	public static PivotTableRenderModel create(PivotModel pivotModel) {
+		PivotTableRenderModel renderModel = new PivotTableRenderModel();
+		renderModel.calculate(pivotModel);
+		return renderModel;
+	}
+
+	private void calculate(PivotModel pivotModel) {
 		spanCache = new HashMap<List<Object>, Integer>();
 		column = new ArrayList<HeaderRenderRow>();
 		row = new ArrayList<DataRenderRow>();
