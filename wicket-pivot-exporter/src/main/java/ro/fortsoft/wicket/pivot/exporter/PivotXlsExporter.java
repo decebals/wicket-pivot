@@ -39,7 +39,7 @@ import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderRow;
 /**
  * Basic XLS exporter
  */
-public class PivotXlsExporter implements IPivotExporter {
+public class PivotXlsExporter implements PivotExporter {
 	private static final long serialVersionUID = 1L;
 
 	private static class StyleContext {

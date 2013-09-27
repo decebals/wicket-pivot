@@ -24,7 +24,7 @@ public class PivotExporters {
 	 * 
 	 * @return a new List of exporter instances
 	 */
-	public static IPivotExporter[] createAllExporter() {
-		return new IPivotExporter[] { new PivotXlsExporter(), new PivotCsvExporter() };
+	public static PivotExporter[] createAllExporter() {
+		return new PivotExporter[] { new PivotXlsExporter(), new PivotCsvExporter() };
 	}
 }
