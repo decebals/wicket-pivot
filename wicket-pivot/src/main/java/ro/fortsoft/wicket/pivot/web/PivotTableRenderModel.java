@@ -51,11 +51,19 @@ public class PivotTableRenderModel implements Serializable {
 		public Object getRawValue() {
 			return value;
 		}
+
+		public int getColspan() {
+			return colspan;
+		}
+
+		public int getRowspan() {
+			return rowspan;
+		}
 	}
 
 	public static class HeaderRenderCell extends RenderCell {
 		private static final long serialVersionUID = 1L;
-	
+
 		public HeaderRenderCell(PivotField pivotField) {
 			this.pivotField = pivotField;
 			if (pivotField != null)
@@ -65,7 +73,7 @@ public class PivotTableRenderModel implements Serializable {
 
 	public static class HeaderValueRenderCell extends HeaderRenderCell {
 		private static final long serialVersionUID = 1L;
-	
+
 		public HeaderValueRenderCell(Object value, PivotField pivotField) {
 			super(pivotField);
 			this.value = value;
@@ -74,7 +82,7 @@ public class PivotTableRenderModel implements Serializable {
 
 	public static class DataHeaderRenderCell extends RenderCell {
 		private static final long serialVersionUID = 1L;
-	
+
 		public DataHeaderRenderCell(Object value, PivotField rowField) {
 			this.value = value;
 			this.pivotField = rowField;
@@ -93,7 +101,7 @@ public class PivotTableRenderModel implements Serializable {
 	public static class GrandTotalValueRenderCell extends RenderCell {
 		private static final long serialVersionUID = 1L;
 		boolean forRow;
-	
+
 		public GrandTotalValueRenderCell(double grandTotalForRow, boolean forRow) {
 			value = grandTotalForRow;
 			this.forRow = forRow;
