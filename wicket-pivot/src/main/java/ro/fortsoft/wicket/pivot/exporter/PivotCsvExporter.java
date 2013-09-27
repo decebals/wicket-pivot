@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package ro.fortsoft.wicket.pivot.web;
+package ro.fortsoft.wicket.pivot.exporter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ro.fortsoft.wicket.pivot.PivotModel;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderRow;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderRow;
 
 public class PivotCsvExporter {
 	private String seperator = ";";
@@ -58,15 +59,15 @@ public class PivotCsvExporter {
 				if (rawValue != null)
 					out.append(String.valueOf(rawValue));
 				out.append(seperator);
-				if (cell.rowspan > 1)
-					rowSpanMap.put(col, cell.rowspan - 1);
+				if (cell.getRowspan() > 1)
+					rowSpanMap.put(col, cell.getRowspan() - 1);
 				col++;
 
 				/*
 				 * We only support colspan _OR_ rowspan. The current PivotTable
 				 * also doesnt have rowspan and colspan at the same time.
 				 */
-				for (int i = 1; i < cell.colspan; i++) {
+				for (int i = 1; i < cell.getColspan(); i++) {
 					out.append(seperator);
 					col++;
 				}

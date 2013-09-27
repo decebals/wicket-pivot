@@ -25,17 +25,18 @@ import org.apache.wicket.util.convert.IConverter;
 
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotModel;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalHeaderRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalRenderRow;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalRowHeaderRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalValueRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.HeaderRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.HeaderRenderRow;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.HeaderValueRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.DataValueRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.DataHeaderRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.DataRenderRow;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.DataHeaderRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.DataRenderRow;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.DataValueRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.GrandTotalHeaderRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.GrandTotalRenderRow;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.GrandTotalRowHeaderRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.GrandTotalValueRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.HeaderRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.HeaderRenderRow;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.HeaderValueRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderCell;
 
 /**
  * @author Decebal Suiu
@@ -49,10 +50,10 @@ public class PivotTable extends GenericPanel<PivotModel> {
 	}
 
 	private Component applyRowColSpan(RenderCell cell, Component tmp) {
-		if (cell.colspan > 1)
-			tmp.add(AttributeModifier.append("colspan", cell.colspan));
-		if (cell.rowspan > 1)
-			tmp.add(AttributeModifier.append("rowspan", cell.rowspan));
+		if (cell.getColspan() > 1)
+			tmp.add(AttributeModifier.append("colspan", cell.getColspan()));
+		if (cell.getRowspan() > 1)
+			tmp.add(AttributeModifier.append("rowspan", cell.getRowspan()));
 		return tmp;
 	}
 
@@ -76,7 +77,7 @@ public class PivotTable extends GenericPanel<PivotModel> {
 			tr.add(rowHeader);
 
 			for (HeaderRenderCell cell : row.getRowHeader()) {
-				if (cell.pivotField == null) {
+				if (cell.getPivotField() == null) {
 					// rendering an empty cell
 					tmp = new Label(rowHeader.newChildId(), "");
 					tmp.add(AttributeModifier.append("class", "empty"));
@@ -84,7 +85,7 @@ public class PivotTable extends GenericPanel<PivotModel> {
 					rowHeader.add(tmp);
 				} else {
 					// rendering row field
-					tmp = createTitleLabel(rowHeader.newChildId(), cell.pivotField);
+					tmp = createTitleLabel(rowHeader.newChildId(), cell.getPivotField());
 					applyRowColSpan(cell, tmp);
 					rowHeader.add(tmp);
 				}
@@ -97,12 +98,12 @@ public class PivotTable extends GenericPanel<PivotModel> {
 				if (cell instanceof HeaderValueRenderCell) {
 					HeaderValueRenderCell headerValueRenderCell = (HeaderValueRenderCell) cell;
 					tmp = createValueLabel(value.newChildId(), headerValueRenderCell.getRawValue(),
-							headerValueRenderCell.pivotField);
+							headerValueRenderCell.getPivotField());
 					applyRowColSpan(cell, tmp);
 					value.add(tmp);
 				} else {
 					HeaderRenderCell headerRenderCell = (HeaderRenderCell) cell;
-					tmp = createTitleLabel(value.newChildId(), headerRenderCell.pivotField);
+					tmp = createTitleLabel(value.newChildId(), headerRenderCell.getPivotField());
 					applyRowColSpan(cell, tmp);
 					value.add(tmp);
 				}
@@ -126,7 +127,7 @@ public class PivotTable extends GenericPanel<PivotModel> {
 					}
 				} else {
 					HeaderRenderCell headerCell = (HeaderRenderCell) cell;
-					tmp = createTitleLabel(value.newChildId(), headerCell.pivotField);
+					tmp = createTitleLabel(value.newChildId(), headerCell.getPivotField());
 					applyRowColSpan(cell, tmp);
 					grandTotalColumn.add(tmp);
 				}
@@ -144,8 +145,8 @@ public class PivotTable extends GenericPanel<PivotModel> {
 			RepeatingView rowHeader = new RepeatingView("rowHeader");
 			tr.add(rowHeader);
 
-			for (DataHeaderRenderCell cell : renderRow.rowHeader) {
-				tmp = createValueLabel(rowHeader.newChildId(), cell.getRawValue(), cell.pivotField);
+			for (DataHeaderRenderCell cell : renderRow.getRowHeader()) {
+				tmp = createValueLabel(rowHeader.newChildId(), cell.getRawValue(), cell.getPivotField());
 				applyRowColSpan(cell, tmp);
 				rowHeader.add(tmp);
 			}
@@ -153,14 +154,14 @@ public class PivotTable extends GenericPanel<PivotModel> {
 			RepeatingView value = new RepeatingView("value");
 			tr.add(value);
 
-			for (RenderCell cell : renderRow.value) {
+			for (RenderCell cell : renderRow.getValue()) {
 				if (cell instanceof DataValueRenderCell) {
-					tmp = createValueLabel(value.newChildId(), cell.getRawValue(), cell.pivotField);
+					tmp = createValueLabel(value.newChildId(), cell.getRawValue(), cell.getPivotField());
 					applyRowColSpan(cell, tmp);
 					value.add(tmp);
 				} else {
 					GrandTotalValueRenderCell grandTotalCell = (GrandTotalValueRenderCell) cell;
-					tmp = createGrandTotalLabel(value.newChildId(), grandTotalCell.getRawValue(), grandTotalCell.forRow);
+					tmp = createGrandTotalLabel(value.newChildId(), grandTotalCell.getRawValue(), grandTotalCell.isForRow());
 					applyRowColSpan(cell, tmp);
 					tmp.add(AttributeModifier.append("class", "grand-total"));
 					value.add(tmp);
@@ -176,7 +177,7 @@ public class PivotTable extends GenericPanel<PivotModel> {
 		 * need a repeating viewer
 		 */
 		for (GrandTotalRenderRow grantTotalRenderRow : renderModel.getGrandTotalRows()) {
-			for (GrandTotalRowHeaderRenderCell cell : grantTotalRenderRow.rowHeader) {
+			for (GrandTotalRowHeaderRenderCell cell : grantTotalRenderRow.getRowHeader()) {
 				Label grandTotalRowHeader = new Label("rowHeader", "Grand Total");
 				applyRowColSpan(cell, grandTotalRowHeader);
 				grandTotalRow.add(grandTotalRowHeader);
@@ -184,8 +185,8 @@ public class PivotTable extends GenericPanel<PivotModel> {
 
 			RepeatingView value = new RepeatingView("value");
 			grandTotalRow.add(value);
-			for (GrandTotalValueRenderCell cell : grantTotalRenderRow.value) {
-				tmp = createGrandTotalLabel(value.newChildId(), cell.getRawValue(), cell.forRow);
+			for (GrandTotalValueRenderCell cell : grantTotalRenderRow.getValue()) {
+				tmp = createGrandTotalLabel(value.newChildId(), cell.getRawValue(), cell.isForRow());
 				value.add(tmp);
 			}
 		}

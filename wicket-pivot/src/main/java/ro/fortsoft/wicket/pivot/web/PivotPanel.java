@@ -40,6 +40,7 @@ import ro.fortsoft.wicket.pivot.PivotDataSource;
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotFieldActionsFactory;
 import ro.fortsoft.wicket.pivot.PivotModel;
+import ro.fortsoft.wicket.pivot.exporter.PivotCsvExporter;
 
 /**
  * @author Decebal Suiu
