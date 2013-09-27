@@ -19,24 +19,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import ro.fortsoft.wicket.pivot.PivotModel;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.DataHeaderRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalHeaderRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalValueRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.HeaderRenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderRow;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.DataHeaderRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.GrandTotalHeaderRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.GrandTotalValueRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.HeaderRenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderRow;
 
 /**
  * Basic XLS exporter

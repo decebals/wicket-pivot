@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package ro.fortsoft.wicket.pivot.web;
+package ro.fortsoft.wicket.pivot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,9 +20,6 @@ import java.util.Map;
 
 import org.apache.wicket.util.collections.MultiMap;
 
-import ro.fortsoft.wicket.pivot.PivotField;
-import ro.fortsoft.wicket.pivot.PivotModel;
-import ro.fortsoft.wicket.pivot.PivotUtils;
 import ro.fortsoft.wicket.pivot.tree.Node;
 import ro.fortsoft.wicket.pivot.tree.TreeHelper;
 
@@ -46,6 +43,10 @@ public class PivotTableRenderModel implements Serializable {
 		int rowspan = 1;
 
 		protected RenderCell() {
+		}
+
+		public PivotField getPivotField() {
+			return pivotField;
 		}
 
 		public Object getRawValue() {
@@ -106,6 +107,11 @@ public class PivotTableRenderModel implements Serializable {
 			value = grandTotalForRow;
 			this.forRow = forRow;
 		}
+
+		public boolean isForRow() {
+			return forRow;
+		}
+		
 	}
 
 	public static class GrandTotalHeaderRenderCell extends RenderCell {
@@ -170,6 +176,14 @@ public class PivotTableRenderModel implements Serializable {
 			ret.addAll(value);
 			return ret;
 		}
+
+		public List<DataHeaderRenderCell> getRowHeader() {
+			return rowHeader;
+		}
+
+		public List<RenderCell> getValue() {
+			return value;
+		}
 	}
 
 	public static class GrandTotalRenderRow extends RenderRow {
@@ -183,6 +197,14 @@ public class PivotTableRenderModel implements Serializable {
 			ret.addAll(rowHeader);
 			ret.addAll(value);
 			return ret;
+		}
+
+		public List<GrandTotalRowHeaderRenderCell> getRowHeader() {
+			return rowHeader;
+		}
+
+		public List<GrandTotalValueRenderCell> getValue() {
+			return value;
 		}
 	}
 

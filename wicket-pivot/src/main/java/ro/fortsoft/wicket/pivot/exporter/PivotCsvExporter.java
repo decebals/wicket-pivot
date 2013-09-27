@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ro.fortsoft.wicket.pivot.PivotModel;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderCell;
-import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderRow;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderCell;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderRow;
 
 /**
  * Basic CSV exporter
