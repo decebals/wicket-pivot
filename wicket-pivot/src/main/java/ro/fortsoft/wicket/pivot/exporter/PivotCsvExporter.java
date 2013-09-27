@@ -27,7 +27,7 @@ import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderRow;
 /**
  * Basic CSV exporter
  */
-public class PivotCsvExporter implements IPivotExporter {	
+public class PivotCsvExporter implements PivotExporter {	
 	private static final long serialVersionUID = 1L;
 	private String seperator = ";";
 

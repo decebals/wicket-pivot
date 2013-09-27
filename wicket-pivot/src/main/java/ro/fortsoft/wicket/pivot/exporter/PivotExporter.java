@@ -21,7 +21,7 @@ import ro.fortsoft.wicket.pivot.PivotModel;
 /**
  * Interface for the pivot exporter plugins
  */
-public interface IPivotExporter extends Serializable {
+public interface PivotExporter extends Serializable {
 	/**
 	 * @return how is this export named? E.g. CSV
 	 */

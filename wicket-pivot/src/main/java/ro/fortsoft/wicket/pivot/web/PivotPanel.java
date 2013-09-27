@@ -40,7 +40,7 @@ import ro.fortsoft.wicket.pivot.PivotDataSource;
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotFieldActionsFactory;
 import ro.fortsoft.wicket.pivot.PivotModel;
-import ro.fortsoft.wicket.pivot.exporter.IPivotExporter;
+import ro.fortsoft.wicket.pivot.exporter.PivotExporter;
 import ro.fortsoft.wicket.pivot.exporter.PivotCsvExporter;
 
 /**
@@ -63,7 +63,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 	private PivotModel pivotModel;
 	private PivotTable pivotTable;
 	private AjaxLink<Void> computeLink;
-	private IPivotExporter[] pivotExporter = new IPivotExporter[] { new PivotCsvExporter() };
+	private PivotExporter[] pivotExporter = new PivotExporter[] { new PivotCsvExporter() };
 	// TODO: requires Serializable?!
 	private PivotFieldActionsFactory pivotFieldActionsFactory;
 	private String pivotExportFilename = "pivottable";
@@ -162,7 +162,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 
 		RepeatingView downloadExports = new RepeatingView("downloadExport");
 		add(downloadExports);
-		for (final IPivotExporter exporter : pivotExporter) {
+		for (final PivotExporter exporter : pivotExporter) {
 			Link<Void> downloadLink = new Link<Void>(downloadExports.newChildId()) {
 				private static final long serialVersionUID = 1L;
 
@@ -265,7 +265,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 	/**
 	 * Set the pivot exporter to use
 	 */
-	public void setPivotExporter(IPivotExporter[] pivotExporter) {
+	public void setPivotExporters(PivotExporter[] pivotExporter) {
 		this.pivotExporter = pivotExporter;
 	}
 
