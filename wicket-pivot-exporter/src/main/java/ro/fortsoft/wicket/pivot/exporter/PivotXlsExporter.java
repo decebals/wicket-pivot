@@ -18,14 +18,23 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import ro.fortsoft.wicket.pivot.PivotModel;
 import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.DataHeaderRenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalHeaderRenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.GrandTotalValueRenderCell;
+import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.HeaderRenderCell;
 import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderCell;
 import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderRow;
 
@@ -35,6 +44,39 @@ import ro.fortsoft.wicket.pivot.web.PivotTableRenderModel.RenderRow;
 public class PivotXlsExporter implements IPivotExporter {
 	private static final long serialVersionUID = 1L;
 
+	private static class StyleContext {
+		private CellStyle headerStyle;
+		private CellStyle dataHeaderStyle;
+		private HSSFCellStyle grandTotalStyle;
+
+		StyleContext(HSSFWorkbook wb) {
+			headerStyle = wb.createCellStyle();
+			
+			headerStyle.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
+			headerStyle.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
+			headerStyle.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
+			headerStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+			headerStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+			headerStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+
+			dataHeaderStyle = wb.createCellStyle();
+			dataHeaderStyle.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
+			dataHeaderStyle.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
+			dataHeaderStyle.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
+			dataHeaderStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+			dataHeaderStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+			dataHeaderStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+
+			grandTotalStyle = wb.createCellStyle();
+			grandTotalStyle.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
+			grandTotalStyle.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
+			grandTotalStyle.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
+			grandTotalStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+			grandTotalStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+			grandTotalStyle.setFillForegroundColor(HSSFColor.LIGHT_TURQUOISE.index);
+		}
+	}
+
 	@Override
 	public void exportPivot(PivotModel pivotModel, OutputStream outputStream) throws IOException {
 		PivotTableRenderModel renderModel = PivotTableRenderModel.create(pivotModel);
@@ -43,6 +85,7 @@ public class PivotXlsExporter implements IPivotExporter {
 		Sheet sheetData = wb.createSheet("Pivot");
 
 		Map<Integer, Integer> rowSpanMap = new HashMap<Integer, Integer>();
+		StyleContext styleContext = new StyleContext(wb);
 
 		int rowNumber = 0;
 		int maxColNum = 0;
@@ -81,6 +124,8 @@ public class PivotXlsExporter implements IPivotExporter {
 					}
 				}
 
+				styleCell(poiCell, cell, styleContext);
+
 				if (cell.getRowspan() > 1) {
 					rowSpanMap.put(col, cell.getRowspan() - 1);
 					sheetData.addMergedRegion(new CellRangeAddress(rowNumber, rowNumber + cell.getRowspan() - 1, col,
@@ -108,6 +153,17 @@ public class PivotXlsExporter implements IPivotExporter {
 
 		wb.write(outputStream);
 		outputStream.flush();
+	}
+
+	private void styleCell(Cell poiCell, RenderCell cell, StyleContext styleContext) {
+		if (cell instanceof HeaderRenderCell)
+			poiCell.setCellStyle(styleContext.headerStyle);
+		if (cell instanceof GrandTotalHeaderRenderCell)
+			poiCell.setCellStyle(styleContext.grandTotalStyle);
+		if( cell instanceof GrandTotalValueRenderCell)
+			poiCell.setCellStyle(styleContext.grandTotalStyle);
+		if (cell instanceof DataHeaderRenderCell)
+			poiCell.setCellStyle(styleContext.dataHeaderStyle);
 	}
 
 	private void autoSizeColumns(Sheet sheetData, int maxColNum) {
