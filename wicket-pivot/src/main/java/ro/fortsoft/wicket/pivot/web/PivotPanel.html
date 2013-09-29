@@ -8,25 +8,28 @@
 	<form class="form-inline">
 	   <fieldset>
 	          <label class="checkbox">
-	              <input wicket:id="showGrandTotalForColumn" type="checkbox"> Show grand total for column
+	              <input wicket:id="showGrandTotalForColumn" type="checkbox">
+				  <wicket:message key="showGrandTotalForColumn">Show grand total for column</wicket:message>
 	          </label>
 	          &nbsp;&nbsp;&nbsp;
 	          <label class="checkbox">
-	              <input wicket:id="showGrandTotalForRow" type="checkbox"> Show grand total for row
+	              <input wicket:id="showGrandTotalForRow" type="checkbox"/>
+	              <wicket:message key="showGrandTotalForRow">Show grand total for row</wicket:message>
 	          </label>
 	          &nbsp;&nbsp;&nbsp;
 	          <label class="checkbox pull-right">
-	              <input wicket:id="autoCalculate" type="checkbox"> Auto calculate
+	              <input wicket:id="autoCalculate" type="checkbox"/>
+	              <wicket:message key="autoCalculate">Auto calculate</wicket:message>
 	          </label>
 	   </fieldset> 
 	</form>
 	
-	<a wicket:id="compute" href="#" class="btn">Show pivot</a>
+	<a wicket:id="compute" href="#" class="btn"><wicket:message key="showPivot">Show pivot</wicket:message></a>
 		    
 	<div class="row-fluid" style="overflow-x: auto;">    
  		<table wicket:id="pivotTable" class="pivot table table-striped table-bordered table-condensed"></table>
  	</div> 	
  	
- 	<a wicket:id='downloadExport' href='#' class='btn' target='pivotTableDownload'><span wicket:id='label'>Download as CSV</span></a>
+ 	<a wicket:id="downloadExport" href="#" class="btn" target="pivotTableDownload"><span wicket:id="label"/></a>
 </wicket:panel>
 </html>

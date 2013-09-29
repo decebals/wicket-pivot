@@ -28,8 +28,10 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceRequestHandler;
 import org.apache.wicket.request.resource.ByteArrayResource;
@@ -182,7 +184,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 				}
 			};
 			downloadExports.add(downloadLink);
-			downloadLink.add(new Label("label", new Model<String>("Download as " + exporter.getFormatName())));
+			IModel<String> resourceModel = new StringResourceModel("downloadAs", downloadLink, Model.of(exporter.getFormatName()));
+			downloadLink.add(new Label("label", resourceModel));
 			downloadLink.setOutputMarkupPlaceholderTag(true);
 			downloadLink.add(AttributeModifier.append("class", new ButtonCssClassModel()));
 		}

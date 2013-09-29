@@ -34,6 +34,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.template.PackageTextTemplate;
 
 import ro.fortsoft.wicket.pivot.PivotField;
@@ -60,7 +61,7 @@ public class PivotAreaPanel extends Panel {
 		modal.setAutoSize(true);
 		add(modal);
 
-		add(new Label("name", area.getName().toUpperCase()));
+		add(new Label("name", new ResourceModel(area.getName())));
 		
 		WebMarkupContainer fieldsContainer = new WebMarkupContainer("fieldsContainer");
 		fieldsContainer.setOutputMarkupId(true);

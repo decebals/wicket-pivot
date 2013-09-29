@@ -40,5 +40,16 @@ public class PivotApplication extends WebApplication {
 	public Class<? extends Page> getHomePage() {
 		return PivotPage.class;
 	}
+	
+	/*
+	// for test locale
+	@Override
+	public Session newSession(Request request, Response response) {
+		Session session = super.newSession(request, response);
+		session.setLocale(new Locale("ro", "RO"));
+
+		return session;
+	}
+	*/
 
 }

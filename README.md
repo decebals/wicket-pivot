@@ -87,6 +87,15 @@ If you want to display programmatically a grand total on rows and/or columns
     pivotModel.setShowGrandTotalForColumn(true);
     pivotModel.setShowGrandTotalForRow(true);
     
+Internationalization
+-------------------
+Wicket-pivot has support for internationalization. 
+Supported languages:
+- English
+- Romanian
+ 
+If you want support for another languages please create and send a pull request (or an email) with the translation of [wicket-package.properties](https://github.com/decebals/wicket-pivot/blob/master/core/src/main/java/ro/fortsoft/wicket/pivot/wicket-package.properties).
+
 Demo
 -------------------
 I have a tiny demo application with a demo apache derby embedded database. The demo application is in demo package.
