@@ -107,7 +107,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-				// TODO Auto-generated method stub
+				if (pivotModel.isAutoCalculate())
+					compute(target);
 			}
 
 		};
@@ -120,7 +121,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-				// TODO Auto-generated method stub
+				if (pivotModel.isAutoCalculate())
+					compute(target);
 			}
 
 		};
