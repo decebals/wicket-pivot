@@ -107,7 +107,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-				// TODO Auto-generated method stub
+				if (pivotModel.isAutoCalculate())
+					compute(target);
 			}
 
 		};
@@ -120,7 +121,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-				// TODO Auto-generated method stub
+				if (pivotModel.isAutoCalculate())
+					compute(target);
 			}
 
 		};
@@ -160,6 +162,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		};
 		computeLink.setOutputMarkupPlaceholderTag(true);
 		computeLink.add(AttributeModifier.append("class", new ButtonCssClassModel()));
+		computeLink.setVisible(!pivotModel.isAutoCalculate());
 		add(computeLink);
 
 		RepeatingView downloadExports = new RepeatingView("downloadExport");
@@ -191,6 +194,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		}
 
 		add(new PivotResourcesBehavior());
+		if (pivotModel.isAutoCalculate())
+			compute(null);
 	}
 
 	@Override
@@ -225,7 +230,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		PivotTable newPivotTable = new PivotTable("pivotTable", pivotModel);
 		pivotTable.replaceWith(newPivotTable);
 		pivotTable = newPivotTable;
-		target.add(pivotTable);
+		if (target != null)
+			target.add(pivotTable);
 	}
 
 	protected PivotModel createPivotModel(PivotDataSource pivotDataSource) {
