@@ -288,11 +288,22 @@ public class DefaultPivotModel implements PivotModel {
 	private List<Object> getValues(PivotField field, Map<Integer, Object> filter) {
 //		long start = System.currentTimeMillis();
 		List<Object> values = new ArrayList<Object>();
-		int fieldIndex = field.getIndex();
-		for (int i = 0; i < dataSource.getRowCount(); i++) {
-			if (filter.isEmpty()) {
+		final int fieldIndex = field.getIndex();
+		final int rowCount = dataSource.getRowCount();
+		
+		if (filter.isEmpty()) {
+			/*
+			 * No filter -> Just add the values
+			 */
+			for (int i = 0; i < rowCount; i++) { 
 				values.add(dataSource.getValueAt(i, fieldIndex));
-			} else {
+			}
+		}
+		else {
+			/*
+			 * Add all values matching the filter
+			 */
+			for (int i = 0; i < rowCount; i++) {
 				if (acceptValue(i, filter)) {
 					values.add(dataSource.getValueAt(i, fieldIndex));
 				}
