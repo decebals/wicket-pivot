@@ -36,6 +36,7 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 	private int areaIndex;
 	private Class<?> type;
 	private Aggregator aggregator;
+	private FieldCalculation fieldCalculation; 
 	private IConverter<?> converter;
 	private int sortOrder;
 	
@@ -92,6 +93,8 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 	}
 
 	public String getCalculationDescription() {
+		if( getFieldCalculation() != null)
+			return getFieldCalculation().getDescription();
 		return getAggregator().getFunction().toUpperCase();
 	}
 	
@@ -180,7 +183,17 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 	 * @internal Reset the calculation state
 	 */
 	void resetCalculation() {
-		if(getAggregator() != null)
+		if (getAggregator() != null)
 			getAggregator().init();
+		if (getFieldCalculation() != null)
+			getFieldCalculation().init();
+	}
+
+	public FieldCalculation getFieldCalculation() {
+		return fieldCalculation;
+	}
+
+	public void setFieldCalculation(FieldCalculation fieldCalculation) {
+		this.fieldCalculation = fieldCalculation;
 	}
 }

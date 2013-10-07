@@ -14,12 +14,16 @@ package ro.fortsoft.wicket.pivot;
 
 import java.util.List;
 
+import ro.fortsoft.wicket.pivot.FieldCalculation.FieldValueProvider;
+
 /**
  * @author Decebal Suiu
  */
 public class PivotUtils {
 
-	public static Number getSummary(PivotField dataField, List<Object> values) {
+	public static Number getSummary(PivotField dataField, List<Object> values, FieldValueProvider fieldValueProvider) {
+		if(dataField.getFieldCalculation() != null ) 
+			return (Number)dataField.getFieldCalculation().init().calculate(fieldValueProvider);		
 		return (Number) dataField.getAggregator().init().addAll(values).getResult();
 	}
 

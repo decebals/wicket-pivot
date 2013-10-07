@@ -98,7 +98,7 @@ public class PivotAreaPanel extends Panel {
 												
 				// add field actions panel
 				if (!area.equals(PivotField.Area.UNUSED)) {
-					PivotFieldActionsPanel pivotFieldActionsPanel = new PivotFieldActionsPanel("dropDownPanel", Model.of(pivotField));
+					PivotFieldActionsPanel pivotFieldActionsPanel = new PivotFieldActionsPanel("dropDownPanel", Model.of(pivotField), Model.of(getPivotModel()));
 					pivotFieldActionsPanel.setRenderBodyOnly(true);
 					item.add(pivotFieldActionsPanel);
 					String markupId = "dropdown-" + pivotField.getIndex();

@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.MultiKeyMap;
 
+import ro.fortsoft.wicket.pivot.FieldCalculation.FieldValueProvider;
 import ro.fortsoft.wicket.pivot.tree.Node;
 import ro.fortsoft.wicket.pivot.tree.Tree;
 import ro.fortsoft.wicket.pivot.tree.TreeHelper;
@@ -155,16 +156,22 @@ public class DefaultPivotModel implements PivotModel {
 			for (List<Object> columnKey : columnKeys) {
 				Map<Integer, Object> rowFilter = getFilter(rowFields, rowKey);
 				Map<Integer, Object> columnFilter = getFilter(columnFields, columnKey);
-				Map<Integer, Object> filter = new HashMap<Integer, Object>(rowFilter);
+				final Map<Integer, Object> filter = new HashMap<Integer, Object>(rowFilter);
 				filter.putAll(columnFilter);				
 				List<Object> values = getValues(dataField, filter);
-				if (!CollectionUtils.isEmpty(values)) {
+				if (!CollectionUtils.isEmpty(values) || dataField.getFieldCalculation()!=null) {
 					/*
 					System.out.println("filter = " + filter);
 					System.out.println("values = " + values);
 					System.out.println(values.size());
 					*/
-					Object summary = PivotUtils.getSummary(dataField, values);
+					Object summary = PivotUtils.getSummary(dataField, values, new FieldValueProvider() {						
+						@Override
+						public Object getFieldValue(PivotField field) {					
+							List<Object> fieldValues = getValues(field, filter);
+							return field.getAggregator().init().addAll(fieldValues).getResult();
+						}
+					});
 //					System.out.println("summary = " + summary);
 					data.put(rowKey, columnKey, summary);
 				}
@@ -286,6 +293,8 @@ public class DefaultPivotModel implements PivotModel {
 	 * Retrieves the values for a data field using a filter.
 	 */
 	private List<Object> getValues(PivotField field, Map<Integer, Object> filter) {
+		if (field.getFieldCalculation() != null)
+			return Collections.emptyList();
 //		long start = System.currentTimeMillis();
 		List<Object> values = new ArrayList<Object>();
 		final int fieldIndex = field.getIndex();
