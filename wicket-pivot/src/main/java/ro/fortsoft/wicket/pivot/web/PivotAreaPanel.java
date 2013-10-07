@@ -85,7 +85,7 @@ public class PivotAreaPanel extends Panel {
 					public String getObject() {
 						String title = pivotField.getTitle();
 						if (area.equals(PivotField.Area.DATA)) {
-							title += " (" + pivotField.getAggregator().getFunction().toUpperCase() + ")"; 
+							title += " (" + pivotField.getCalculationDescription() + ")"; 
 						}
 						
 						return title;

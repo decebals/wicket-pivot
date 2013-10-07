@@ -124,7 +124,7 @@ public class DefaultPivotModel implements PivotModel {
 		List<PivotField> dataFields = getFields(PivotField.Area.DATA);
 		calculatedData = new ArrayList<MultiKeyMap>();
 		for (PivotField field : dataFields) {
-			field.getAggregator().init();
+			field.resetCalculation();
 			calculatedData.add(getData(field));
 		}
 		t2 = System.currentTimeMillis();

@@ -91,6 +91,10 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 		return this;
 	}
 
+	public String getCalculationDescription() {
+		return getAggregator().getFunction().toUpperCase();
+	}
+	
 	public Aggregator getAggregator() {
 		return aggregator;
 	}
@@ -171,5 +175,12 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 		}
 		
 	}
-	
+
+	/**
+	 * @internal Reset the calculation state
+	 */
+	void resetCalculation() {
+		if(getAggregator() != null)
+			getAggregator().init();
+	}
 }
