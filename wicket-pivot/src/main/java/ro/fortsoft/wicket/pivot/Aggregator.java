@@ -14,6 +14,7 @@ package ro.fortsoft.wicket.pivot;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public abstract class Aggregator implements Serializable {
     
     public abstract String getFunction();
     
-	public Aggregator addAll(Object... values) {
+	public Aggregator addAll(Collection<Object> values) {
 		for (Object value : values) {
 			add(value);
 		}
