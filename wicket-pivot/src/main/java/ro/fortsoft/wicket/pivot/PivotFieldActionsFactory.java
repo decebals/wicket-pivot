@@ -19,6 +19,6 @@ import java.util.List;
  */
 public interface PivotFieldActionsFactory {
 
-	public List<PivotFieldAction> createPivotFieldActions(PivotField field);
+	public List<PivotFieldAction> createPivotFieldActions(PivotField field, PivotModel model);
 	
 }
