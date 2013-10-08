@@ -199,7 +199,7 @@ public class PivotTable extends GenericPanel<PivotModel> {
 	protected Label createTitleLabel(String id, PivotField pivotField) {
 		String title = pivotField.getTitle();
 		if (pivotField.getArea().equals(PivotField.Area.DATA)) {
-			title += " (" + pivotField.getAggregator().getFunction().toUpperCase() + ")";
+			title += " (" + pivotField.getCalculationDescription() + ")";
 		}
 
 		return new Label(id, title);

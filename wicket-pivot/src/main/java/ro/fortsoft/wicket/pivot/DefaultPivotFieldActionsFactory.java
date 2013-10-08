@@ -19,20 +19,24 @@ import java.util.List;
 /**
  * @author Decebal Suiu
  */
-public class DefaultPivotFieldActionsFactory implements PivotFieldActionsFactory,
-		Serializable {
+public class DefaultPivotFieldActionsFactory implements PivotFieldActionsFactory, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public List<PivotFieldAction> createPivotFieldActions(PivotField field) {
+	public List<PivotFieldAction> createPivotFieldActions(PivotField field, PivotModel model) {
 		List<PivotFieldAction> fieldActions = new ArrayList<PivotFieldAction>();
-//		fieldActions.add(new PivotFieldAction.Delete(field));
-		if (field.getArea().equals(PivotField.Area.DATA)) {
+
+		// fieldActions.add(new PivotFieldAction.Delete(field));
+		if (field.getArea().equals(PivotField.Area.DATA) && field.getAggregator() != null) {
 			fieldActions.add(new PivotFieldAction.AggregatorAction(field));
 		}
-
-		
+		if (field.getArea().equals(PivotField.Area.DATA)) {
+			if (field.getFieldCalculation() != null)
+				fieldActions.add(new PivotFieldAction.FieldCalculationAction(field, model));
+			else
+				fieldActions.add(new PivotFieldAction.AddNewFieldCalculationAction(field, model));
+		}
 		return fieldActions;
 	}
 

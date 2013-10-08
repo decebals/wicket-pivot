@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.wicket.util.collections.MultiMap;
 
+import ro.fortsoft.wicket.pivot.FieldCalculation.FieldValueProvider;
 import ro.fortsoft.wicket.pivot.tree.Node;
 import ro.fortsoft.wicket.pivot.tree.TreeHelper;
 
@@ -111,7 +112,7 @@ public class PivotTableRenderModel implements Serializable {
 		public boolean isForRow() {
 			return forRow;
 		}
-		
+
 	}
 
 	public static class GrandTotalHeaderRenderCell extends RenderCell {
@@ -360,14 +361,20 @@ public class PivotTableRenderModel implements Serializable {
 			}
 
 			if (!columnFields.isEmpty() && pivotModel.isShowGrandTotalForRow()) {
-				MultiMap<PivotField, Object> values = new MultiMap<PivotField, Object>();
+				final MultiMap<PivotField, Object> values = new MultiMap<PivotField, Object>();
 				for (List<Object> columnKey : columnKeys) {
 					for (PivotField dataField : dataFields) {
 						values.addValue(dataField, pivotModel.getValueAt(dataField, rowKey, columnKey));
 					}
 				}
 				for (PivotField dataField : dataFields) {
-					double grandTotalForRow = PivotUtils.getSummary(dataField, values.get(dataField)).doubleValue();
+					double grandTotalForRow = PivotUtils.getSummary(dataField, values.get(dataField),
+							new FieldValueProvider() {
+								@Override
+								public Object getFieldValue(PivotField field) {
+									return 0;
+								}
+							}).doubleValue();
 					GrandTotalValueRenderCell cell = new GrandTotalValueRenderCell(grandTotalForRow, true);
 					tr.value.add(cell);
 				}
@@ -391,7 +398,13 @@ public class PivotTableRenderModel implements Serializable {
 					}
 				}
 				for (PivotField dataField : dataFields) {
-					double grandTotalForColumn = PivotUtils.getSummary(dataField, values.get(dataField)).doubleValue();
+					double grandTotalForColumn = PivotUtils.getSummary(dataField, values.get(dataField),
+							new FieldValueProvider() {
+								@Override
+								public Object getFieldValue(PivotField field) {
+									return 0;
+								}
+							}).doubleValue();
 					if (!grandTotal.containsKey(dataField)) {
 						grandTotal.put(dataField, grandTotalForColumn);
 					} else {

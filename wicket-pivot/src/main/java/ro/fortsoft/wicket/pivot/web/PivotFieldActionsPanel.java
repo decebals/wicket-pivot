@@ -30,6 +30,7 @@ import org.apache.wicket.resource.JQueryPluginResourceReference;
 
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotFieldAction;
+import ro.fortsoft.wicket.pivot.PivotModel;
 
 /**
  * @author Decebal Suiu
@@ -39,8 +40,9 @@ public class PivotFieldActionsPanel extends GenericPanel<PivotField> {
 	private static final long serialVersionUID = 1L;
 
 	private IModel<List<PivotFieldAction>> actionsModel;
+
 	
-	public PivotFieldActionsPanel(String id, IModel<PivotField> model) {
+	public PivotFieldActionsPanel(String id, IModel<PivotField> model, final IModel<PivotModel> pivotModel) {
 		super(id, model);
 		
 		WebMarkupContainer dropDownContainer = new WebMarkupContainer("dropdown");
@@ -54,7 +56,7 @@ public class PivotFieldActionsPanel extends GenericPanel<PivotField> {
 			@Override
 			protected List<PivotFieldAction> load() {
 				PivotPanel pivotPanel = findParent(PivotPanel.class);
-				return pivotPanel.getPivotFieldActionsFactory().createPivotFieldActions(getPivotField());
+				return pivotPanel.getPivotFieldActionsFactory().createPivotFieldActions(getPivotField(), pivotModel.getObject());
 			}
 			
 		};
