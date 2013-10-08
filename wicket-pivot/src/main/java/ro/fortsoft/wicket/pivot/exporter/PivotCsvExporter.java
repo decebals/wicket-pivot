@@ -98,6 +98,6 @@ public class PivotCsvExporter implements PivotExporter {
 
 	@Override
 	public String getFilenameExtension() {
-		return null;
+		return ".csv";
 	}
 }
