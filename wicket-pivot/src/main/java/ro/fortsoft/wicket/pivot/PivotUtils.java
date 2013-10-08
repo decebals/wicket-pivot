@@ -20,7 +20,7 @@ import java.util.List;
 public class PivotUtils {
 
 	public static Number getSummary(PivotField dataField, List<Object> values) {
-		return (Number) dataField.getAggregator().init().addAll(values.toArray()).getResult();
+		return (Number) dataField.getAggregator().init().addAll(values).getResult();
 	}
 
 }
