@@ -21,6 +21,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -35,6 +36,7 @@ public class FieldCalculationPanel extends GenericPanel<PivotField> {
 
 		@Override
 		protected void onUpdate(AjaxRequestTarget target) {
+			// We just want the field content to be pushed to the server
 		}
 	}
 
@@ -52,6 +54,7 @@ public class FieldCalculationPanel extends GenericPanel<PivotField> {
 	private FieldCalculation fieldCalculation;
 	private PivotField fieldA;
 	private PivotField fieldB;
+	private String title = "Calculation";
 	private boolean okPressed;
 
 	public FieldCalculationPanel(String id, IModel<PivotField> model, IModel<PivotModel> pivotModel) {
@@ -99,6 +102,9 @@ public class FieldCalculationPanel extends GenericPanel<PivotField> {
 		fieldBDropDown.add(new OnChangeAjaxBehaviorExtension());
 		add(fieldBDropDown);
 
+		add(new TextField<String>("title", new PropertyModel<String>(this, "title"))
+				.add(new OnChangeAjaxBehaviorExtension()));
+
 		add(new AjaxLink<Void>("ok") {
 			private static final long serialVersionUID = 1L;
 
@@ -140,5 +146,13 @@ public class FieldCalculationPanel extends GenericPanel<PivotField> {
 
 	public void setFieldB(PivotField fieldB) {
 		this.fieldB = fieldB;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }

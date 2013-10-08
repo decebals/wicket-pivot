@@ -107,6 +107,7 @@ public abstract class PivotFieldAction implements Serializable {
 			modal.setTitle("Calculation");
 			final FieldCalculationPanel panel = new FieldCalculationPanel(modal.getContentId(), Model.of(field),
 					Model.of(pivotModel));
+			panel.setTitle(field.getTitle());
 			panel.add(AttributeModifier.append("style", "padding: 10px;"));
 			modal.setContent(panel);
 			modal.setAutoSize(true);
@@ -125,7 +126,9 @@ public abstract class PivotFieldAction implements Serializable {
 					target.add(ajaxLink.findParent(PivotAreaPanel.class));
 
 					PivotModel pivotModel = getPivotModel(ajaxLink);
-					pivotModel.getField(field.getName()).setFieldCalculation(panel.getFieldCalculation());
+					PivotField pivotField = pivotModel.getField(field.getName());
+					pivotField.setFieldCalculation(panel.getFieldCalculation());
+					pivotField.setTitle(panel.getTitle());
 					if (pivotModel.isAutoCalculate()) {
 						ajaxLink.findParent(PivotPanel.class).compute(target);
 					}
