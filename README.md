@@ -16,6 +16,7 @@ and what is their ordering. Also, here I can mention if I want a grand total on 
 As a constraint, on pivot's data area must be minimum one field and minimum one field on row or column areas.
 Also on aria DATA you can put only fields with Number type. 
 The pivot fields allow several types of aggregations including sum, average, min, max, count. 
+- **PivotExporter** is the interface for the pivot exporter plugins (builtin support for Csv and Xls)
 
 Artifacts
 -------------------
@@ -87,11 +88,20 @@ If you want to display programmatically a grand total on rows and/or columns
     pivotModel.setShowGrandTotalForColumn(true);
     pivotModel.setShowGrandTotalForRow(true);
     
+Also, Wicket Pivot has support for Field calculations, e.g: 
+
+- % fieldA of fieldB (PercentOf); when you need to display how much % are the costs from the revenue. I.e. how much % of our revenue do we give to Google
+- field A + fieldB (Addition)
+- fieldA - fieldB (Substract)
+
+Another nice feature is auto calculate (a check box component). When you check this feature than on each pivot modifications (area, aggregation, etc) you can see the result in real time.
+
 Internationalization
 -------------------
 Wicket-pivot has support for internationalization. 
 Supported languages:
 - English
+- German
 - Romanian
  
 If you want support for another languages please create and send a pull request (or an email) with the translation of [wicket-package.properties](https://github.com/decebals/wicket-pivot/blob/master/wicket-pivot/src/main/java/ro/fortsoft/wicket/pivot/wicket-package.properties).
