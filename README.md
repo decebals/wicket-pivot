@@ -94,7 +94,7 @@ Supported languages:
 - English
 - Romanian
  
-If you want support for another languages please create and send a pull request (or an email) with the translation of [wicket-package.properties](https://github.com/decebals/wicket-pivot/blob/master/core/src/main/java/ro/fortsoft/wicket/pivot/wicket-package.properties).
+If you want support for another languages please create and send a pull request (or an email) with the translation of [wicket-package.properties](https://github.com/decebals/wicket-pivot/blob/master/wicket-pivot/src/main/java/ro/fortsoft/wicket/pivot/wicket-package.properties).
 
 Demo
 -------------------
