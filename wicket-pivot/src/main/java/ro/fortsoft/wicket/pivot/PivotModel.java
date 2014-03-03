@@ -62,6 +62,5 @@ public interface PivotModel extends Serializable {
 	public boolean isAutoCalculate();
 	
 	public void setAutoCalculate(boolean autoCalculate);
-	
 
 }
