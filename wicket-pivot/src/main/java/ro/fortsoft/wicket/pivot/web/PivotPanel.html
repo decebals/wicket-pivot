@@ -29,7 +29,9 @@
 	<div class="row-fluid" style="overflow-x: auto;">    
  		<table wicket:id="pivotTable" class="pivot table table-striped table-bordered table-condensed"></table>
  	</div> 	
- 	
- 	<a wicket:id="downloadExport" href="#" class="btn" target="pivotTableDownload"><span wicket:id="label"/></a>
+
+    <div wicket:id="downloadContainer">
+ 	    <a wicket:id="downloadExport" href="#" class="btn" target="pivotTableDownload"><span wicket:id="label"/></a>
+    </div>
 </wicket:panel>
 </html>

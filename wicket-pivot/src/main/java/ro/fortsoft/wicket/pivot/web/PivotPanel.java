@@ -65,7 +65,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 	private PivotModel pivotModel;
 	private PivotTable pivotTable;
 	private AjaxLink<Void> computeLink;
-	private PivotExporter[] pivotExporter = new PivotExporter[] { new PivotCsvExporter() };
+    private WebMarkupContainer downloadContainer;
+	private PivotExporter[] pivotExporters = new PivotExporter[] { new PivotCsvExporter() };
 	// TODO: requires Serializable?!
 	private PivotFieldActionsFactory pivotFieldActionsFactory;
 	private String pivotExportFilename = "pivottable";
@@ -107,8 +108,9 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-				if (pivotModel.isAutoCalculate())
+				if (pivotModel.isAutoCalculate()) {
 					compute(target);
+                }
 			}
 
 		};
@@ -121,8 +123,9 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-				if (pivotModel.isAutoCalculate())
+				if (pivotModel.isAutoCalculate()) {
 					compute(target);
+                }
 			}
 
 		};
@@ -165,9 +168,14 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		computeLink.setVisible(!pivotModel.isAutoCalculate());
 		add(computeLink);
 
+        downloadContainer = new WebMarkupContainer("downloadContainer");
+        downloadContainer.setOutputMarkupPlaceholderTag(true);
+        downloadContainer.setVisible(pivotTable.isVisible() && (pivotExporters.length > 0));
+        add(downloadContainer);
+
 		RepeatingView downloadExports = new RepeatingView("downloadExport");
-		add(downloadExports);
-		for (final PivotExporter exporter : pivotExporter) {
+        downloadContainer.add(downloadExports);
+		for (final PivotExporter exporter : pivotExporters) {
 			Link<Void> downloadLink = new Link<Void>(downloadExports.newChildId()) {
 				private static final long serialVersionUID = 1L;
 
@@ -194,8 +202,9 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		}
 
 		add(new PivotResourcesBehavior());
-		if (pivotModel.isAutoCalculate())
+		if (pivotModel.isAutoCalculate()) {
 			compute(null);
+        }
 	}
 
 	@Override
@@ -230,8 +239,14 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		PivotTable newPivotTable = new PivotTable("pivotTable", pivotModel);
 		pivotTable.replaceWith(newPivotTable);
 		pivotTable = newPivotTable;
-		if (target != null)
+		if (target != null) {
+            // update pivot table
 			target.add(pivotTable);
+
+            // update download container visibility
+            downloadContainer.setVisible(pivotTable.isVisible() && (pivotExporters.length > 0));
+            target.add(downloadContainer);
+        }
 	}
 
 	protected PivotModel createPivotModel(PivotDataSource pivotDataSource) {
@@ -275,7 +290,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 	 * Set the pivot exporter to use
 	 */
 	public void setPivotExporters(PivotExporter[] pivotExporter) {
-		this.pivotExporter = pivotExporter;
+		this.pivotExporters = pivotExporter;
 	}
 
 	/**
