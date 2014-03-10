@@ -12,17 +12,15 @@
  */
 package ro.fortsoft.wicket.pivot;
 
+import org.apache.wicket.util.collections.MultiMap;
+import ro.fortsoft.wicket.pivot.tree.Node;
+import ro.fortsoft.wicket.pivot.tree.TreeHelper;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.wicket.util.collections.MultiMap;
-
-import ro.fortsoft.wicket.pivot.FieldCalculation.FieldValueProvider;
-import ro.fortsoft.wicket.pivot.tree.Node;
-import ro.fortsoft.wicket.pivot.tree.TreeHelper;
 
 /**
  * Render Model of the PivotTable. This is independant of the resulting output
@@ -368,13 +366,15 @@ public class PivotTableRenderModel implements Serializable {
 					}
 				}
 				for (PivotField dataField : dataFields) {
-					double grandTotalForRow = PivotUtils.getSummary(dataField, values.get(dataField),
-							new FieldValueProvider() {
-								@Override
-								public Object getFieldValue(PivotField field) {
-									return 0;
-								}
-							}).doubleValue();
+                    double grandTotalForRow = 0.0d;
+
+                    List<Object> items = values.get(dataField);
+                    for (Object item : items) {
+                        if (item != null) {
+                            grandTotalForRow += ((Number) item).doubleValue();
+                        }
+                    }
+
 					GrandTotalValueRenderCell cell = new GrandTotalValueRenderCell(grandTotalForRow, true);
 					tr.value.add(cell);
 				}
@@ -398,13 +398,15 @@ public class PivotTableRenderModel implements Serializable {
 					}
 				}
 				for (PivotField dataField : dataFields) {
-					double grandTotalForColumn = PivotUtils.getSummary(dataField, values.get(dataField),
-							new FieldValueProvider() {
-								@Override
-								public Object getFieldValue(PivotField field) {
-									return 0;
-								}
-							}).doubleValue();
+                    double grandTotalForColumn = 0.0d;
+
+                    List<Object> items = values.get(dataField);
+                    for (Object item : items) {
+                        if (item != null) {
+                            grandTotalForColumn += ((Number) item).doubleValue();
+                        }
+                    }
+
 					if (!grandTotal.containsKey(dataField)) {
 						grandTotal.put(dataField, grandTotalForColumn);
 					} else {
@@ -434,6 +436,7 @@ public class PivotTableRenderModel implements Serializable {
 		if (!node.isLeaf()) {
 			span = TreeHelper.getLeafs(node).size();
 		}
+
 		return span;
 	}
 }
