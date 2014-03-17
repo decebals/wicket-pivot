@@ -12,7 +12,7 @@
  */
 package ro.fortsoft.wicket.pivot.config;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Implementations of this interface can store and restore the current
@@ -25,7 +25,7 @@ public interface IPivotConfigStorage {
 	 * 
 	 * @return the list of all stored configurations
 	 */
-	Collection<String> listConfigNames();
+	List<String> listConfigNames();
 
 	/**
 	 * Load a configuration
@@ -39,7 +39,7 @@ public interface IPivotConfigStorage {
 	 * Save a configuration. If a configuration with the same name already
 	 * exists, it will be overwritten
 	 */
-	void saveConfig(String name, PivotConfig config);
+	void saveConfig(PivotConfig config);
 
 	/**
 	 * Delete the configuration with this name

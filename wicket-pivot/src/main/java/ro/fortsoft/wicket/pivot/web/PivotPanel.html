@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
+
+	<a wicket:id='configStoreButton' class='pivot-config-store-button btn'><wicke:message key='loadSaveConfiguration'>Load/Save Configuration</wicke:message></a>	
 	<div wicket:id="areas" class="areas">
 	   <div wicket:id="area" class="row-fluid area"></div>
 	</div>
-	
 	<form class="form-inline">
 	   <fieldset>
 	          <label class="checkbox">
@@ -33,5 +34,6 @@
     <div wicket:id="downloadContainer">
  	    <a wicket:id="downloadExport" href="#" class="btn" target="pivotTableDownload"><span wicket:id="label"/></a>
     </div>
+    <div wicket:id="modal"></div>            
 </wicket:panel>
 </html>
