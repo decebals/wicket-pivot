@@ -125,8 +125,10 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 
 					@Override
 					public void onClose(AjaxRequestTarget target) {
-						compute(target);
-						target.add(areasContainer);
+						target.add(PivotPanel.this);
+						if (pivotModel.isAutoCalculate())
+							compute(target);
+						computeLink.setVisible(!pivotModel.isAutoCalculate());
 					}
 				});
 			}
@@ -243,6 +245,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		if (pivotModel.isAutoCalculate()) {
 			compute(null);
 		}
+		
+		setOutputMarkupId(true);
 	}
 
 	@Override
