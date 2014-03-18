@@ -78,7 +78,7 @@ public class PivotPage extends WebPage {
 			}
 
 		};
-		pivotPanel.setPivotConfigStorage(new PivotConfigStorageSession());
+		pivotPanel.setPivotConfigStorage(new PivotConfigSessionStorage());
 		add(pivotPanel);
 	}
 

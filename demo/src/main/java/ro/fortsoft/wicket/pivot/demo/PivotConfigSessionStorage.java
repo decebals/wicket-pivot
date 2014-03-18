@@ -29,7 +29,7 @@ import ro.fortsoft.wicket.pivot.config.PivotConfig;
  * Stores the configurations in the session. You usually want to store the
  * configuration somewhere else (e.g. in a database)
  */
-public class PivotConfigStorageSession implements IPivotConfigStorage, Serializable {
+public class PivotConfigSessionStorage implements IPivotConfigStorage, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override
