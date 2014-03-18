@@ -68,3 +68,7 @@
 	white-space: nowrap;
 	vertical-align: baseline;
 }
+
+.pivot-config-store-button {
+	float:right;
+}

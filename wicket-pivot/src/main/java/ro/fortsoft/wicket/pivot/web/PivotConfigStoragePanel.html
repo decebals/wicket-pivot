@@ -1,0 +1,26 @@
+<wicket:panel>
+	<form wicket:id='form'>
+		<input wicket:id='configStoreName' type="text"
+			onsubmit="return false;" />
+		<button class='btn' wicket:id='save'>
+			<wicket:message key="saveConfiguration">Save configuration</wicket:message>
+		</button>
+	</form>
+
+
+	<wicket:message key='savedConfigurations'>Your saved configurations:</wicket:message>
+	<table style='min-width: 500px; min-height: 100px;'
+		class='table table-bordered table-condensed'>
+		<tr wicket:id='configs'>
+			<td><div wicket:id='name'></div></td>
+			<td><div wicket:id='load' class='btn'>
+					<wicket:message key='loadConfiguration'>Load</wicket:message>
+				</div></td>
+			<td>
+				<div wicket:id='delete' class='btn'>
+					<wicket:message key='deleteConfiguration'>Delete</wicket:message>
+				</div>
+			</td>
+		</tr>
+	</table>
+</wicket:panel>

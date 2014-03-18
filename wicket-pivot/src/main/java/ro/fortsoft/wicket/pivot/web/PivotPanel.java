@@ -22,6 +22,8 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.WindowClosedCallback;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -42,8 +44,9 @@ import ro.fortsoft.wicket.pivot.PivotDataSource;
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotFieldActionsFactory;
 import ro.fortsoft.wicket.pivot.PivotModel;
-import ro.fortsoft.wicket.pivot.exporter.PivotExporter;
+import ro.fortsoft.wicket.pivot.config.IPivotConfigStorage;
 import ro.fortsoft.wicket.pivot.exporter.PivotCsvExporter;
+import ro.fortsoft.wicket.pivot.exporter.PivotExporter;
 
 /**
  * @author Decebal Suiu
@@ -65,11 +68,14 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 	private PivotModel pivotModel;
 	private PivotTable pivotTable;
 	private AjaxLink<Void> computeLink;
-    private WebMarkupContainer downloadContainer;
+	private WebMarkupContainer downloadContainer;
 	private PivotExporter[] pivotExporters = new PivotExporter[] { new PivotCsvExporter() };
 	// TODO: requires Serializable?!
 	private PivotFieldActionsFactory pivotFieldActionsFactory;
 	private String pivotExportFilename = "pivottable";
+	private IPivotConfigStorage pivotConfigStorage;
+
+	private ModalWindow modal;
 
 	public PivotPanel(String id, PivotDataSource pivotDataSource) {
 		super(id, Model.of(pivotDataSource));
@@ -101,6 +107,39 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		pivotTable = createPivotTabel("pivotTable", pivotModel);
 		add(pivotTable);
 
+		modal = new ModalWindow("modal");
+		modal.setAutoSize(true);
+		add(modal);
+
+		AjaxLink<Void> configStoreButton = new AjaxLink<Void>("configStoreButton") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick(AjaxRequestTarget target) {
+				modal.setTitle("Configuration");
+				modal.setContent(new PivotConfigStoragePanel(ModalWindow.CONTENT_ID, pivotModel, pivotConfigStorage));
+				modal.setAutoSize(true);
+				modal.show(target);
+				modal.setWindowClosedCallback(new WindowClosedCallback() {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void onClose(AjaxRequestTarget target) {
+						target.add(PivotPanel.this);
+						if (pivotModel.isAutoCalculate())
+							compute(target);
+						computeLink.setVisible(!pivotModel.isAutoCalculate());
+					}
+				});
+			}
+
+			@Override
+			public boolean isVisible() {
+				return super.isVisible() && pivotConfigStorage != null;
+			}
+		};
+		add(configStoreButton);
+
 		AjaxCheckBox showGrandTotalForColumnCheckBox = new AjaxCheckBox("showGrandTotalForColumn",
 				new PropertyModel<Boolean>(this, "pivotModel.showGrandTotalForColumn")) {
 
@@ -110,7 +149,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 			protected void onUpdate(AjaxRequestTarget target) {
 				if (pivotModel.isAutoCalculate()) {
 					compute(target);
-                }
+				}
 			}
 
 		};
@@ -125,7 +164,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 			protected void onUpdate(AjaxRequestTarget target) {
 				if (pivotModel.isAutoCalculate()) {
 					compute(target);
-                }
+				}
 			}
 
 		};
@@ -168,13 +207,13 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		computeLink.setVisible(!pivotModel.isAutoCalculate());
 		add(computeLink);
 
-        downloadContainer = new WebMarkupContainer("downloadContainer");
-        downloadContainer.setOutputMarkupPlaceholderTag(true);
-        downloadContainer.setVisible(pivotTable.isVisible() && (pivotExporters.length > 0));
-        add(downloadContainer);
+		downloadContainer = new WebMarkupContainer("downloadContainer");
+		downloadContainer.setOutputMarkupPlaceholderTag(true);
+		downloadContainer.setVisible(pivotTable.isVisible() && (pivotExporters.length > 0));
+		add(downloadContainer);
 
 		RepeatingView downloadExports = new RepeatingView("downloadExport");
-        downloadContainer.add(downloadExports);
+		downloadContainer.add(downloadExports);
 		for (final PivotExporter exporter : pivotExporters) {
 			Link<Void> downloadLink = new Link<Void>(downloadExports.newChildId()) {
 				private static final long serialVersionUID = 1L;
@@ -195,7 +234,8 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 				}
 			};
 			downloadExports.add(downloadLink);
-			IModel<String> resourceModel = new StringResourceModel("downloadAs", downloadLink, Model.of(exporter.getFormatName()));
+			IModel<String> resourceModel = new StringResourceModel("downloadAs", downloadLink, Model.of(exporter
+					.getFormatName()));
 			downloadLink.add(new Label("label", resourceModel));
 			downloadLink.setOutputMarkupPlaceholderTag(true);
 			downloadLink.add(AttributeModifier.append("class", new ButtonCssClassModel()));
@@ -204,7 +244,9 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		add(new PivotResourcesBehavior());
 		if (pivotModel.isAutoCalculate()) {
 			compute(null);
-        }
+		}
+		
+		setOutputMarkupId(true);
 	}
 
 	@Override
@@ -240,13 +282,13 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		pivotTable.replaceWith(newPivotTable);
 		pivotTable = newPivotTable;
 		if (target != null) {
-            // update pivot table
+			// update pivot table
 			target.add(pivotTable);
 
-            // update download container visibility
-            downloadContainer.setVisible(pivotTable.isVisible() && (pivotExporters.length > 0));
-            target.add(downloadContainer);
-        }
+			// update download container visibility
+			downloadContainer.setVisible(pivotTable.isVisible() && (pivotExporters.length > 0));
+			target.add(downloadContainer);
+		}
 	}
 
 	protected PivotModel createPivotModel(PivotDataSource pivotDataSource) {
@@ -300,5 +342,18 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 	 */
 	public void setPivotExportFilename(String pivotExportFilename) {
 		this.pivotExportFilename = pivotExportFilename;
+	}
+
+	public IPivotConfigStorage getPivotConfigStorage() {
+		return pivotConfigStorage;
+	}
+
+	/**
+	 * Set the Pivot Configuration Storage to use. By default no storage is set.
+	 * 
+	 * @param pivotConfigStorage
+	 */
+	public void setPivotConfigStorage(IPivotConfigStorage pivotConfigStorage) {
+		this.pivotConfigStorage = pivotConfigStorage;
 	}
 }

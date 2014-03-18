@@ -25,24 +25,24 @@ import ro.fortsoft.wicket.pivot.web.PivotPanel;
 public class PivotPage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public PivotPage() {
-		super();		
-		
+		super();
+
 		// create a pivot data source
 		PivotDataSource pivotDataSource = PivotDataSourceHandler.getPivotDataSource();
 		System.out.println("pivotDataSource = " + pivotDataSource);
 //		System.out.println("fieldCount = " + pivotDataSource.getFieldCount());
 //		System.out.println("rowCount = " + pivotDataSource.getRowCount());
-		
-		add(new PivotPanel("pivot", pivotDataSource) {
+
+		PivotPanel pivotPanel = new PivotPanel("pivot", pivotDataSource) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected PivotModel createPivotModel(PivotDataSource pivotDataSource) {
 				PivotModel pivotModel = super.createPivotModel(pivotDataSource);
-				
+
 				// add some fields on some area
 				pivotModel.getField("REGION").setArea(PivotField.Area.ROW);
 				pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW).setAreaIndex(1);
@@ -76,8 +76,10 @@ public class PivotPage extends WebPage {
 
 				return pivotModel;
 			}
-			
-		});		
+
+		};
+		pivotPanel.setPivotConfigStorage(new PivotConfigSessionStorage());
+		add(pivotPanel);
 	}
-			
+
 }
