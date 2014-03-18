@@ -117,7 +117,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				modal.setTitle("Configuration");
-				modal.setContent(new PivotConfigStorePanel(ModalWindow.CONTENT_ID, pivotModel, pivotConfigStorage));
+				modal.setContent(new PivotConfigStoragePanel(ModalWindow.CONTENT_ID, pivotModel, pivotConfigStorage));
 				modal.setAutoSize(true);
 				modal.show(target);
 				modal.setWindowClosedCallback(new WindowClosedCallback() {

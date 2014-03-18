@@ -18,13 +18,13 @@ import ro.fortsoft.wicket.pivot.PivotModel;
 import ro.fortsoft.wicket.pivot.config.IPivotConfigStorage;
 import ro.fortsoft.wicket.pivot.config.PivotConfig;
 
-public class PivotConfigStorePanel extends Panel {
+public class PivotConfigStoragePanel extends Panel {
 	private static final long serialVersionUID = 1L;
 	private IPivotConfigStorage pivotConfigStorage;
 	private Model<ArrayList<String>> configNameModel;
 	private ListView<String> configListView;
 
-	public PivotConfigStorePanel(String id, final PivotModel pivotModel, final IPivotConfigStorage pivotConfigStorage) {
+	public PivotConfigStoragePanel(String id, final PivotModel pivotModel, final IPivotConfigStorage pivotConfigStorage) {
 		super(id);
 		this.pivotConfigStorage = pivotConfigStorage;
 
