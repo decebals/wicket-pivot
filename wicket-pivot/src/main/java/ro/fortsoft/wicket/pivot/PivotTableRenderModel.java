@@ -13,11 +13,14 @@
 package ro.fortsoft.wicket.pivot;
 
 import org.apache.wicket.util.collections.MultiMap;
+
+import ro.fortsoft.wicket.pivot.FieldCalculation.FieldValueProvider;
 import ro.fortsoft.wicket.pivot.tree.Node;
 import ro.fortsoft.wicket.pivot.tree.TreeHelper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +36,33 @@ public class PivotTableRenderModel implements Serializable {
 	}
 
 	private Map<List<Object>, Integer> spanCache;
+
+	/**
+	 * Get values from pre summed column / row sums. 
+	 */
+	private static final class FieldValueProviderFromSummedValues implements FieldValueProvider {
+		private final MultiMap<PivotField, Object> values;
+
+		private FieldValueProviderFromSummedValues(MultiMap<PivotField, Object> values) {
+			this.values = values;
+		}
+
+		@Override
+		public Object getFieldValue(PivotField field) {
+			// If the field is not in the regular
+			// data, we can not return a sum of it
+			if (!values.containsKey(field))
+				return 0;
+			double sum = 0;
+			List<Object> items = values.get(field);
+			for (Object item : items) {
+				if (item != null) {
+					sum += ((Number) item).doubleValue();
+				}
+			}
+			return sum;
+		}
+	}
 
 	public static abstract class RenderCell implements Serializable {
 		private static final long serialVersionUID = 1L;
@@ -366,17 +396,20 @@ public class PivotTableRenderModel implements Serializable {
 					}
 				}
 				for (PivotField dataField : dataFields) {
-                    double grandTotalForRow = 0.0d;
-
-                    List<Object> items = values.get(dataField);
-                    for (Object item : items) {
-                        if (item != null) {
-                            grandTotalForRow += ((Number) item).doubleValue();
+					double grandTotalForRow = 0.0d;
+					if (dataField.getFieldCalculation() != null) {
+						grandTotalForRow = PivotUtils.getSummary(dataField, Collections.emptyList(),
+								new FieldValueProviderFromSummedValues(values)).doubleValue();
+					} 
+					else {
+                        List<Object> items = values.get(dataField);
+                        for (Object item : items) {
+                            if (item != null) {
+                                grandTotalForRow += ((Number) item).doubleValue();
+                            }
                         }
-                    }
-
-					GrandTotalValueRenderCell cell = new GrandTotalValueRenderCell(grandTotalForRow, true);
-					tr.value.add(cell);
+					}
+                    tr.value.add(new GrandTotalValueRenderCell(grandTotalForRow, true));
 				}
 			}
 		}
@@ -389,36 +422,60 @@ public class PivotTableRenderModel implements Serializable {
 			tr.rowHeader.add(grandTotalCell);
 			grandTotalCell.colspan = rowFieldsSize;
 
-			Map<PivotField, Double> grandTotal = new HashMap<PivotField, Double>();
+			final Map<PivotField, Double> grandTotal = new HashMap<PivotField, Double>();
 			for (List<Object> columnKey : columnKeys) {
 				MultiMap<PivotField, Object> values = new MultiMap<PivotField, Object>();
 				for (List<Object> rowKey : rowKeys) {
 					for (PivotField dataField : dataFields) {
-						values.addValue(dataField, pivotModel.getValueAt(dataField, rowKey, columnKey));
+						if( dataField.getFieldCalculation() == null)
+							values.addValue(dataField, pivotModel.getValueAt(dataField, rowKey, columnKey));
 					}
 				}
 				for (PivotField dataField : dataFields) {
-                    double grandTotalForColumn = 0.0d;
-
-                    List<Object> items = values.get(dataField);
-                    for (Object item : items) {
-                        if (item != null) {
-                            grandTotalForColumn += ((Number) item).doubleValue();
-                        }
-                    }
-
-					if (!grandTotal.containsKey(dataField)) {
-						grandTotal.put(dataField, grandTotalForColumn);
-					} else {
-						grandTotal.put(dataField, grandTotal.get(dataField) + grandTotalForColumn);
+					double grandTotalForColumn = 0.0d;
+					if (dataField.getFieldCalculation() != null) {
+						grandTotalForColumn = PivotUtils.getSummary(dataField, Collections.emptyList(),
+								new FieldValueProviderFromSummedValues(values)).doubleValue();
 					}
+					else {
+						// We can sum all row values
+                        List<Object> items = values.get(dataField);
+                        for (Object item : items) {
+                            if (item != null) {
+                                grandTotalForColumn += ((Number) item).doubleValue();
+                            }
+                        }
 
-					tr.value.add(new GrandTotalValueRenderCell(grandTotalForColumn, false));
+                        if (!grandTotal.containsKey(dataField)) {
+                            grandTotal.put(dataField, grandTotalForColumn);
+                        } else {
+                            grandTotal.put(dataField, grandTotal.get(dataField) + grandTotalForColumn);
+                        }
+
+					}
+                    tr.value.add(new GrandTotalValueRenderCell(grandTotalForColumn, false));
 				}
 			}
 			if (!columnFields.isEmpty() && pivotModel.isShowGrandTotalForRow()) {
 				for (PivotField dataField : dataFields) {
-					tr.value.add(new GrandTotalValueRenderCell(grandTotal.get(dataField), true));
+					if (dataField.getFieldCalculation() != null) {
+						double grandTotalValue = PivotUtils.getSummary(dataField, Collections.emptyList(),
+								new FieldValueProvider() {
+									@Override
+									public Object getFieldValue(PivotField field) {
+										// If the field is not in the regular
+										// data, we can not return a sum of it
+										if (!grandTotal.containsKey(field))
+											return 0;
+										return grandTotal.get(field);
+									}
+								}).doubleValue();
+
+						tr.value.add(new GrandTotalValueRenderCell(grandTotalValue, true));
+					}
+					else {
+						tr.value.add(new GrandTotalValueRenderCell(grandTotal.get(dataField), true));
+					}
 				}
 			}
 		}
