@@ -4,12 +4,12 @@
     <parent>
         <groupId>ro.fortsoft.wicket.pivot</groupId>
         <artifactId>wicket-pivot-parent</artifactId>
-        <version>0.5.0</version>
+        <version>0.6.0-SNAPHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>wicket-pivot-demo</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.0-SNAPHOT</version>
     <packaging>war</packaging>
     <name>Wicket Pivot Demo</name>
         
