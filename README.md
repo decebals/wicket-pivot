@@ -122,6 +122,22 @@ on COLUMN area and "SALES" on DATA area) and press the "Show pivot" button.
 
 You can see a screenshot from demo application in [wiki page] (https://github.com/decebals/wicket-pivot/wiki).
 
+Versioning
+------------
+Wicket-pivot will be maintained under the Semantic Versioning guidelines as much as possible.
+
+Releases will be numbered with the follow format:
+
+`<major>.<minor>.<patch>`
+
+And constructed with the following guidelines:
+
+* Breaking backward compatibility bumps the major
+* New additions without breaking backward compatibility bumps the minor
+* Bug fixes and misc changes bump the patch
+
+For more information on SemVer, please visit http://semver.org/.
+
 License
 --------------
 Copyright 2012 Decebal Suiu
