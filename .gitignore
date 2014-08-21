@@ -2,6 +2,6 @@ target/
 .project
 .classpath
 .settings
-demo/db/*
+demo/data/
 .idea/
 *.iml
