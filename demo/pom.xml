@@ -14,7 +14,7 @@
     <name>Wicket Pivot Demo</name>
         
     <properties>
-        <jetty.version>7.5.0.v20110901</jetty.version>
+        <jetty.version>8.1.16.v20140903</jetty.version>
         <slf4j.version>1.6.4</slf4j.version>
         <log4j.version>1.2.16</log4j.version>
     </properties>
@@ -104,7 +104,7 @@
             <groupId>org.eclipse.jetty.aggregate</groupId>
             <artifactId>jetty-all-server</artifactId>
             <version>${jetty.version}</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     
