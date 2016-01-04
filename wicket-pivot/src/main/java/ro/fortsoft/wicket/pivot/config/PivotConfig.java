@@ -12,15 +12,15 @@
  */
 package ro.fortsoft.wicket.pivot.config;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import ro.fortsoft.wicket.pivot.Aggregator;
 import ro.fortsoft.wicket.pivot.FieldCalculation;
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotField.Area;
 import ro.fortsoft.wicket.pivot.PivotModel;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A stored pivot table configuration. The structure of this class and its child
@@ -202,14 +202,14 @@ public class PivotConfig implements Serializable {
 		this.name = name;
 	}
 
-	/**
+	/*
 	 * @internal Only for the serializers
 	 */
 	public PivotConfigField[] getPivotConfigFields() {
 		return pivotConfigFields;
 	}
 
-	/**
+	/*
 	 * @internal Only for the serializers
 	 */
 	public void setPivotConfigFields(PivotConfigField[] pivotConfigFields) {
