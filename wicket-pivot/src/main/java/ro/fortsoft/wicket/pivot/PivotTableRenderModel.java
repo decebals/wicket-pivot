@@ -22,8 +22,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Render Model of the PivotTable. This is independant of the resulting output
@@ -311,7 +313,8 @@ public class PivotTableRenderModel implements Serializable {
 
 			// rendering column keys
 			Node columnsRoot = pivotModel.getColumnsHeaderTree().getRoot();
-			List<List<Object>> pathRenderedCache = new ArrayList<List<Object>>();
+			/*HashSet look-up is O(1) more optimized than ArrayList*/
+			Set<List<Object>> pathRenderedCache = new HashSet<List<Object>>();
 			for (List<Object> columnKey : columnKeys) {
 				if (i < columnFieldsSize) {
 					PivotField columnField = columnFields.get(i);
@@ -359,7 +362,8 @@ public class PivotTableRenderModel implements Serializable {
 
 		// rendering rows
 		Node rowsRoot = pivotModel.getRowsHeaderTree().getRoot();
-		List<List<Object>> pathRenderedCache = new ArrayList<List<Object>>();
+		/*HashSet look-up is O(1) more optimized than ArrayList*/
+		Set<List<Object>> pathRenderedCache = new HashSet<List<Object>>();
 		for (List<Object> rowKey : rowKeys) {
 			DataRenderRow tr = new DataRenderRow();
 			row.add(tr);
@@ -491,9 +495,8 @@ public class PivotTableRenderModel implements Serializable {
 
 		int span = 1;
 		if (!node.isLeaf()) {
-			span = TreeHelper.getLeafs(node).size();
+			span = TreeHelper.getLeafsSize(node);
 		}
-
 		return span;
 	}
 }
