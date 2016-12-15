@@ -34,6 +34,25 @@ public class TreeHelper {
 		return leafs;
 	}
 	
+	/*Using recursion to optimize the method by 
+	 * reducing the number of object created*/
+	public static int getLeafsSize(Node root) {
+		List<Node> children=root.getChildren();
+		if(children.size()==0)
+			return 0;
+		int span=0;
+		for(Node node:children){
+			int chilrenSize=getLeafsSize(node);
+			if(chilrenSize==0){
+				span=children.size();
+				break;
+			}
+			else
+				span=span+chilrenSize;
+		}
+		return span;
+	}
+	
 	public static List<List<Object>> getLeafValues(Node root) {
 		List<List<Object>> leafValues = new ArrayList<List<Object>>();
 		List<Node> leafs = getLeafs(root);
