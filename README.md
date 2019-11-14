@@ -43,50 +43,60 @@ How to use
 -------------------
 It's very simple to add a pivot table in your wicket application.
 
-    PivotDataSource pivotDataSource = ...;      
-    add(new PivotPanel("pivot", pivotDataSource));
-  
+```java
+PivotDataSource pivotDataSource = ...;      
+add(new PivotPanel("pivot", pivotDataSource));
+```
+
 First of all you must create a PivotDataSource and secondly add the pivot panel in your page.
 
 If you want to add programmatically some fields on the pivot areas
 
-    pivotModel.getField("REGION").setArea(PivotField.Area.ROW);
-    pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW).setAreaIndex(1);
-    pivotModel.getField("YEAR").setArea(PivotField.Area.COLUMN);
-    pivotModel.getField("MONTH").setArea(PivotField.Area.COLUMN).setAreaIndex(1);
-    pivotModel.getField("SALES").setArea(PivotField.Area.DATA);
+```java
+pivotModel.getField("REGION").setArea(PivotField.Area.ROW);
+pivotModel.getField("SALESMAN").setArea(PivotField.Area.ROW).setAreaIndex(1);
+pivotModel.getField("YEAR").setArea(PivotField.Area.COLUMN);
+pivotModel.getField("MONTH").setArea(PivotField.Area.COLUMN).setAreaIndex(1);
+pivotModel.getField("SALES").setArea(PivotField.Area.DATA);
+```
 
 You can specify an aggregator for a data pivot field
 
-    pivotModel.getField("SALES").setAggregator(Aggregator.get(Aggregator.COUNT));
-    
-    or 
-    
-    pivotModel.getField("MONEY").setAggregator(new Aggregator.Count());
+```java
+pivotModel.getField("SALES").setAggregator(Aggregator.get(Aggregator.COUNT));
+```    
 
-You can specify a custom converter (wicket IConverter) for a field
+or 
 
-    pivotModel.getField("SALES").setConverter(new DoubleConverter() {
+```java
+pivotModel.getField("MONEY").setAggregator(new Aggregator.Count());
+```
 
-        private static final long serialVersionUID = 1L;
+You can specify a custom converter (wicket `IConverter`) for a field
 
-        @Override
-        public NumberFormat getNumberFormat(Locale locale) {
-            NumberFormat format = super.getNumberFormat(locale);
-            format.setMinimumFractionDigits(2);
+```java
+pivotModel.getField("SALES").setConverter(new DoubleConverter() {
 
-            return format;
-        }
+    @Override
+    public NumberFormat getNumberFormat(Locale locale) {
+        NumberFormat format = super.getNumberFormat(locale);
+        format.setMinimumFractionDigits(2);
 
-    });
-    
+        return format;
+    }
+
+});
+```   
+
 If you don't set a converter for a field then this field (the values) will be rendered 
 with a converter supplied by wicket according to the field type.
 
 If you want to display programmatically a grand total on rows and/or columns
 
-    pivotModel.setShowGrandTotalForColumn(true);
-    pivotModel.setShowGrandTotalForRow(true);
+```java
+pivotModel.setShowGrandTotalForColumn(true);
+pivotModel.setShowGrandTotalForRow(true);
+```
     
 Also, Wicket Pivot has support for Field calculations, e.g: 
 
@@ -111,9 +121,11 @@ Demo
 I have a tiny demo application with a demo apache derby embedded database. The demo application is in demo package.
 To run the demo application use:  
  
-    mvn install
-    cd demo
-    mvn jetty:run
+```bash
+mvn install
+cd demo
+mvn jetty:run
+```
 
 In the internet browser type http://localhost:8081/.
 
