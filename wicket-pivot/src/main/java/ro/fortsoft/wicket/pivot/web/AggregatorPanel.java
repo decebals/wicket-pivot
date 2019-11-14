@@ -45,24 +45,24 @@ public class AggregatorPanel extends GenericPanel<PivotField> {
 		
 		aggregator = getModelObject().getAggregator();
 		
-		List<Aggregator> aggregators = new ArrayList<Aggregator>();
+		List<Aggregator> aggregators = new ArrayList<>();
 		aggregators.add(Aggregator.get(Aggregator.SUM));
 		aggregators.add(Aggregator.get(Aggregator.AVG));
 		aggregators.add(Aggregator.get(Aggregator.MIN));
 		aggregators.add(Aggregator.get(Aggregator.MAX));
 		aggregators.add(Aggregator.get(Aggregator.COUNT));
-		final DropDownChoice<Aggregator> aggregatorDownChoice = new DropDownChoice<Aggregator>("aggregator", 
-				new PropertyModel<Aggregator>(this, "aggregator"), aggregators,
+		final DropDownChoice<Aggregator> aggregatorDownChoice = new DropDownChoice<>("aggregator",
+				new PropertyModel<>(this, "aggregator"), aggregators,
 				new ChoiceRenderer<Aggregator>("function") {
 
 					private static final long serialVersionUID = 1L;
-			 		
+
 					@Override
 					public Object getDisplayValue(Aggregator object) {
 						return ((String) super.getDisplayValue(object)).toUpperCase();
 					}
-			
-		});
+
+				});
 		aggregatorDownChoice.add(new OnChangeAjaxBehavior() {
 
 			private static final long serialVersionUID = 1L;

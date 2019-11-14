@@ -12,29 +12,20 @@
  */
 package ro.fortsoft.wicket.pivot.exporter;
 
-import java.awt.HeadlessException;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import ro.fortsoft.wicket.pivot.PivotModel;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel;
+import ro.fortsoft.wicket.pivot.PivotTableRenderModel.*;
+
+import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellRangeAddress;
-
-import ro.fortsoft.wicket.pivot.PivotModel;
-import ro.fortsoft.wicket.pivot.PivotTableRenderModel;
-import ro.fortsoft.wicket.pivot.PivotTableRenderModel.DataHeaderRenderCell;
-import ro.fortsoft.wicket.pivot.PivotTableRenderModel.GrandTotalHeaderRenderCell;
-import ro.fortsoft.wicket.pivot.PivotTableRenderModel.GrandTotalValueRenderCell;
-import ro.fortsoft.wicket.pivot.PivotTableRenderModel.HeaderRenderCell;
-import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderCell;
-import ro.fortsoft.wicket.pivot.PivotTableRenderModel.RenderRow;
 
 /**
  * Basic XLS exporter
@@ -49,29 +40,29 @@ public class PivotXlsExporter implements PivotExporter {
 
 		StyleContext(HSSFWorkbook wb) {
 			headerStyle = wb.createCellStyle();
-			
-			headerStyle.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
-			headerStyle.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
-			headerStyle.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
-			headerStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
-			headerStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-			headerStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+
+			headerStyle.setBorderTop(BorderStyle.MEDIUM);
+			headerStyle.setBorderLeft(BorderStyle.MEDIUM);
+			headerStyle.setBorderRight(BorderStyle.MEDIUM);
+			headerStyle.setBorderBottom(BorderStyle.MEDIUM);
+			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerStyle.setFillForegroundColor(HSSFColorPredefined.GREY_25_PERCENT.getIndex());
 
 			dataHeaderStyle = wb.createCellStyle();
-			dataHeaderStyle.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
-			dataHeaderStyle.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
-			dataHeaderStyle.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
-			dataHeaderStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
-			dataHeaderStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-			dataHeaderStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+			dataHeaderStyle.setBorderTop(BorderStyle.MEDIUM);
+			dataHeaderStyle.setBorderLeft(BorderStyle.MEDIUM);
+			dataHeaderStyle.setBorderRight(BorderStyle.MEDIUM);
+			dataHeaderStyle.setBorderBottom(BorderStyle.MEDIUM);
+			dataHeaderStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			dataHeaderStyle.setFillForegroundColor(HSSFColorPredefined.GREY_25_PERCENT.getIndex());
 
 			grandTotalStyle = wb.createCellStyle();
-			grandTotalStyle.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
-			grandTotalStyle.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
-			grandTotalStyle.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
-			grandTotalStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
-			grandTotalStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-			grandTotalStyle.setFillForegroundColor(HSSFColor.LIGHT_TURQUOISE.index);
+			grandTotalStyle.setBorderTop(BorderStyle.MEDIUM);
+			grandTotalStyle.setBorderLeft(BorderStyle.MEDIUM);
+			grandTotalStyle.setBorderRight(BorderStyle.MEDIUM);
+			grandTotalStyle.setBorderBottom(BorderStyle.MEDIUM);
+			grandTotalStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			grandTotalStyle.setFillForegroundColor(HSSFColorPredefined.LIGHT_TURQUOISE.getIndex());
 		}
 	}
 
@@ -82,7 +73,7 @@ public class PivotXlsExporter implements PivotExporter {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		Sheet sheetData = wb.createSheet("Pivot");
 
-		Map<Integer, Integer> rowSpanMap = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> rowSpanMap = new HashMap<>();
 		StyleContext styleContext = new StyleContext(wb);
 
 		int rowNumber = 0;
@@ -179,7 +170,7 @@ public class PivotXlsExporter implements PivotExporter {
 			// calculate zoom factor
 			int nominator = 45000 * 100 / width;
 			if (nominator < 100)
-				sheetData.setZoom(nominator, 100);
+				sheetData.setZoom(nominator);
 
 		} catch (HeadlessException he) {
 			// No UI, no autosize :(

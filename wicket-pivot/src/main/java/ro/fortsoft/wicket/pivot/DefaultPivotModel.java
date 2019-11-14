@@ -12,24 +12,13 @@
  */
 package ro.fortsoft.wicket.pivot;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.MultiKeyMap;
-
-import ro.fortsoft.wicket.pivot.FieldCalculation.FieldValueProvider;
 import ro.fortsoft.wicket.pivot.tree.Node;
 import ro.fortsoft.wicket.pivot.tree.Tree;
 import ro.fortsoft.wicket.pivot.tree.TreeHelper;
+
+import java.util.*;
 
 /**
  * @author Decebal Suiu
@@ -53,7 +42,7 @@ public class DefaultPivotModel implements PivotModel {
 
 		// init fields
 		int count = dataSource.getFieldCount();
-		fields = new ArrayList<PivotField>(count);
+		fields = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
 			PivotField field = new PivotField(dataSource.getFieldName(i), i);
 			field.setTitle(field.getName());
@@ -92,7 +81,7 @@ public class DefaultPivotModel implements PivotModel {
 	
 	@Override
 	public List<PivotField> getFields(PivotField.Area area) {
-		List<PivotField> areaFields = new ArrayList<PivotField>();
+		List<PivotField> areaFields = new ArrayList<>();
 		List<PivotField> fields = getFields();
 		for (PivotField field : fields) {
 			if (field.getArea().equals(area)) {
@@ -123,7 +112,7 @@ public class DefaultPivotModel implements PivotModel {
 
 		t1 = System.currentTimeMillis();
 		List<PivotField> dataFields = getFields(PivotField.Area.DATA);
-		calculatedData = new ArrayList<MultiKeyMap>();
+		calculatedData = new ArrayList<>();
 		for (PivotField field : dataFields) {
 			field.resetCalculation();
 			calculatedData.add(getData(field));
@@ -156,7 +145,7 @@ public class DefaultPivotModel implements PivotModel {
 			for (List<Object> columnKey : columnKeys) {
 				Map<Integer, Object> rowFilter = getFilter(rowFields, rowKey);
 				Map<Integer, Object> columnFilter = getFilter(columnFields, columnKey);
-				final Map<Integer, Object> filter = new HashMap<Integer, Object>(rowFilter);
+				final Map<Integer, Object> filter = new HashMap<>(rowFilter);
 				filter.putAll(columnFilter);				
 				List<Object> values = getValues(dataField, filter);
 				if (!CollectionUtils.isEmpty(values) || dataField.getFieldCalculation()!=null) {
@@ -165,12 +154,9 @@ public class DefaultPivotModel implements PivotModel {
 					System.out.println("values = " + values);
 					System.out.println(values.size());
 					*/
-					Object summary = PivotUtils.getSummary(dataField, values, new FieldValueProvider() {						
-						@Override
-						public Object getFieldValue(PivotField field) {					
-							List<Object> fieldValues = getValues(field, filter);
-							return field.getAggregator().init().addAll(fieldValues).getResult();
-						}
+					Object summary = PivotUtils.getSummary(dataField, values, field -> {
+						List<Object> fieldValues = getValues(field, filter);
+						return field.getAggregator().init().addAll(fieldValues).getResult();
 					});
 //					System.out.println("summary = " + summary);
 					data.put(rowKey, columnKey, summary);
@@ -261,9 +247,8 @@ public class DefaultPivotModel implements PivotModel {
 			return;
 		}
 
-		Iterator<Object> it = values.iterator();
-		while (it.hasNext()) {
-			node.insert(it.next());
+		for (Object value : values) {
+			node.insert(value);
 		}
 
 		for (Node child : node.getChildren()) {
@@ -296,7 +281,7 @@ public class DefaultPivotModel implements PivotModel {
 		if (field.getFieldCalculation() != null)
 			return Collections.emptyList();
 //		long start = System.currentTimeMillis();
-		List<Object> values = new ArrayList<Object>();
+		List<Object> values = new ArrayList<>();
 		final int fieldIndex = field.getIndex();
 		final int rowCount = dataSource.getRowCount();
 		
@@ -330,7 +315,7 @@ public class DefaultPivotModel implements PivotModel {
 	 */
 	private Map<Integer, Object> getFilter(List<PivotField> fields, List<Object> values) {
 //		long start = System.currentTimeMillis();
-		Map<Integer, Object> filter = new HashMap<Integer, Object>();
+		Map<Integer, Object> filter = new HashMap<>();
 		for (int i = 0; i < values.size(); i++) {
 			int fieldIndex = fields.get(i).getIndex();
 			// System.out.println(fieldIndex);
@@ -351,28 +336,24 @@ public class DefaultPivotModel implements PivotModel {
 			 * We need to get the value set and sort it. We can not use a
 			 * TreeSet here as it does not allow null values.
 			 */
-			Set<Object> valueSet = new HashSet<Object>(values);
-			List<Object> valuesToOrder = new ArrayList<Object>(valueSet);
+			Set<Object> valueSet = new HashSet<>(values);
+			List<Object> valuesToOrder = new ArrayList<>(valueSet);
 			final int sign = sortOrder == PivotField.SORT_ORDER_ASCENDING ? 1
 					: sortOrder == PivotField.SORT_ORDER_DESCENDING ? -1 : 1;
-			Collections.sort(valuesToOrder, new Comparator<Object>() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public int compare(Object o1, Object o2) {
-					if (o1 == o2)
-						return 0;
-					if (o1 == null)
-						return sign * -1;
-					if (o2 == null)
-						return sign * 1;
-					return sign * ((Comparable<Object>) o1).compareTo(o2);
-				}
+			valuesToOrder.sort((o1, o2) -> {
+				if (o1 == o2)
+					return 0;
+				if (o1 == null)
+					return sign * -1;
+				if (o2 == null)
+					return sign;
+				return sign * ((Comparable<Object>) o1).compareTo(o2);
 			});
 
-			return new LinkedHashSet<Object>(valuesToOrder);
+			return new LinkedHashSet<>(valuesToOrder);
 		}
 
-		return new LinkedHashSet<Object>(values);
+		return new LinkedHashSet<>(values);
 	}
 
 	private boolean acceptValue(int row, Map<Integer, Object> filter) {
@@ -382,7 +363,7 @@ public class DefaultPivotModel implements PivotModel {
 		for (int index : keys) {
 			value = dataSource.getValueAt(row, fields.get(index));
 			Object filterValue = filter.get(index);
-			if (filterValue != value && (filterValue == null || !filterValue.equals(value))) {
+			if (!Objects.equals(filterValue, value)) {
 				return false;
 			}
 		}

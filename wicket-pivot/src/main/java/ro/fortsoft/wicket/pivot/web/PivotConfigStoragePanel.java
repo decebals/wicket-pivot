@@ -1,7 +1,5 @@
 package ro.fortsoft.wicket.pivot.web;
 
-import java.util.ArrayList;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -13,10 +11,11 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
-
 import ro.fortsoft.wicket.pivot.PivotModel;
 import ro.fortsoft.wicket.pivot.config.IPivotConfigStorage;
 import ro.fortsoft.wicket.pivot.config.PivotConfig;
+
+import java.util.ArrayList;
 
 public class PivotConfigStoragePanel extends Panel {
 	private static final long serialVersionUID = 1L;
@@ -28,15 +27,15 @@ public class PivotConfigStoragePanel extends Panel {
 		super(id);
 		this.pivotConfigStorage = pivotConfigStorage;
 
-		Form<Void> form = new Form<Void>("form");
-		final TextField<String> configStoreName = new TextField<String>("configStoreName", new Model<String>(""));
+		Form<Void> form = new Form<>("form");
+		final TextField<String> configStoreName = new TextField<>("configStoreName", new Model<>(""));
 		form.add(configStoreName);
 
 		AjaxButton saveButton = new AjaxButton("save") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+			protected void onSubmit(AjaxRequestTarget target) {
 				String value = configStoreName.getValue();
 				if (value == null || value.isEmpty())
 					return;
@@ -50,13 +49,13 @@ public class PivotConfigStoragePanel extends Panel {
 		form.add(saveButton);
 		add(form);
 
-		configNameModel = new Model<ArrayList<String>>();
+		configNameModel = new Model<>();
 		configListView = new ListView<String>("configs", configNameModel) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected void populateItem(final ListItem<String> item) {
-				item.add(new Label("name", new Model<String>(item.getModelObject())));
+				item.add(new Label("name", new Model<>(item.getModelObject())));
 				item.add(new AjaxLink<Void>("load") {
 					private static final long serialVersionUID = 1L;
 
@@ -88,7 +87,7 @@ public class PivotConfigStoragePanel extends Panel {
 	}
 
 	private void refreshList(AjaxRequestTarget target) {
-		configNameModel.setObject(new ArrayList<String>(pivotConfigStorage.listConfigNames()));
+		configNameModel.setObject(new ArrayList<>(pivotConfigStorage.listConfigNames()));
 		if (target != null)
 			target.add(this);
 	}

@@ -32,9 +32,9 @@ public class ResultSetPivotDataSource implements PivotDataSource {
 	private int columnCount;
 
 	public ResultSetPivotDataSource(ResultSet resultSet) throws SQLException {
-		data = new ArrayList<List<Object>>();
-		columnNames = new ArrayList<String>();
-		columnTypes = new ArrayList<Class<?>>();
+		data = new ArrayList<>();
+		columnNames = new ArrayList<>();
+		columnTypes = new ArrayList<>();
 		
 		populate(resultSet);
 	}
@@ -101,7 +101,7 @@ public class ResultSetPivotDataSource implements PivotDataSource {
 //				System.out.println(columnTypes);
 			}
 	
-			List<Object> row = new ArrayList<Object>(columnCount);
+			List<Object> row = new ArrayList<>(columnCount);
 			for (int i = 0; i < columnCount; i++) {
 				row.add(resultSet.getObject(i + 1));
 			}

@@ -158,7 +158,7 @@ public class PivotField implements Serializable, Comparable<PivotField> {
 		}
 
 		public static List<Area> getValues() {
-			List<Area> values = new ArrayList<Area>();
+			List<Area> values = new ArrayList<>();
 			values.add(ROW);
 			values.add(COLUMN);
 			values.add(DATA);

@@ -141,7 +141,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		add(configStoreButton);
 
 		AjaxCheckBox showGrandTotalForColumnCheckBox = new AjaxCheckBox("showGrandTotalForColumn",
-				new PropertyModel<Boolean>(this, "pivotModel.showGrandTotalForColumn")) {
+				new PropertyModel<>(this, "pivotModel.showGrandTotalForColumn")) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -156,7 +156,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		add(showGrandTotalForColumnCheckBox);
 
 		AjaxCheckBox showGrandTotalForRowCheckBox = new AjaxCheckBox("showGrandTotalForRow",
-				new PropertyModel<Boolean>(this, "pivotModel.showGrandTotalForRow")) {
+				new PropertyModel<>(this, "pivotModel.showGrandTotalForRow")) {
 
 			private static final long serialVersionUID = 1L;
 
@@ -170,7 +170,7 @@ public class PivotPanel extends GenericPanel<PivotDataSource> {
 		};
 		add(showGrandTotalForRowCheckBox);
 
-		AjaxCheckBox autoCalculateCheckBox = new AjaxCheckBox("autoCalculate", new PropertyModel<Boolean>(this,
+		AjaxCheckBox autoCalculateCheckBox = new AjaxCheckBox("autoCalculate", new PropertyModel<>(this,
 				"pivotModel.autoCalculate")) {
 
 			private static final long serialVersionUID = 1L;
