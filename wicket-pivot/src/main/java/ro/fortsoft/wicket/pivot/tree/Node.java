@@ -29,12 +29,12 @@ public class Node implements Serializable {
     private List<Node> children;
 
     public Node() {
-        children = new ArrayList<Node>();
+        children = new ArrayList<>();
     }
 
     public Node(Object data) {
     	this.data = data;
-        children = new ArrayList<Node>();
+        children = new ArrayList<>();
     }
 
     public Node getParent() {
@@ -87,7 +87,7 @@ public class Node implements Serializable {
 			return Collections.emptyList();
 		}
 		
-		List<Object> pathValues = new ArrayList<Object>();
+		List<Object> pathValues = new ArrayList<>();
 		pathValues.add(getData());
 		Node parent = getParent();
     	while (parent != null) {

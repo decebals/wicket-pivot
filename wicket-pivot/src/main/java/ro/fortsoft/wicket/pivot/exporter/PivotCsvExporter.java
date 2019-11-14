@@ -36,7 +36,7 @@ public class PivotCsvExporter implements PivotExporter {
 		PivotTableRenderModel renderModel = PivotTableRenderModel.create(pivotModel);
 
 		OutputStreamWriter out = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
-		Map<Integer, Integer> rowSpanMap = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> rowSpanMap = new HashMap<>();
 
 		for (RenderRow row : renderModel.getAllRenderRows()) {
 			int col = 0;

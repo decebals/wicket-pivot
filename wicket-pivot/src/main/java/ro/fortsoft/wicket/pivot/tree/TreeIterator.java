@@ -43,7 +43,7 @@ public class TreeIterator implements Iterator<Node> {
 	}
 
     public Iterator<Object> getValuesIterator() {
-        List<Object> values = new ArrayList<Object>();
+        List<Object> values = new ArrayList<>();
         while (hasNext()) {
             values.add(next().getData());
         }
@@ -52,11 +52,10 @@ public class TreeIterator implements Iterator<Node> {
     }
 
     private List<Node> getList(Node node) {
-        List<Node> nodes = new ArrayList<Node>();
+        List<Node> nodes = new ArrayList<>();
         nodes.add(node);
-        Iterator<Node> iterator = node.getChildren().iterator();
-        while (iterator.hasNext()) {
-        	nodes.addAll(getList(iterator.next()));
+        for (Node value : node.getChildren()) {
+            nodes.addAll(getList(value));
         }
 
         return nodes;

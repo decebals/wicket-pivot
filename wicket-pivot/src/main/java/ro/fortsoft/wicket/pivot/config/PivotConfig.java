@@ -250,7 +250,7 @@ public class PivotConfig implements Serializable {
 		this.showGrandTotalForRow = model.isShowGrandTotalForRow();
 		this.autoCalculate = model.isAutoCalculate();
 
-		List<PivotConfigField> fields = new ArrayList<PivotConfigField>();
+		List<PivotConfigField> fields = new ArrayList<>();
 		for (PivotField field : model.getFields()) {
 			/* We don't store unused fields */
 			if (field.getArea() == Area.UNUSED)
@@ -275,7 +275,7 @@ public class PivotConfig implements Serializable {
 		 * We set all fields to unused, as we don't save unused fields, so thats
 		 * the default value
 		 */
-		List<PivotField> fieldsToDelete = new ArrayList<PivotField>();
+		List<PivotField> fieldsToDelete = new ArrayList<>();
 		for (PivotField field : model.getFields()) {
 			/*
 			 * We must delete all field calculations, as this are additional

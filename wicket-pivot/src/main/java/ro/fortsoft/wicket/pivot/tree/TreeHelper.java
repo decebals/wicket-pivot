@@ -15,6 +15,7 @@ package ro.fortsoft.wicket.pivot.tree;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Decebal Suiu
@@ -22,7 +23,7 @@ import java.util.List;
 public class TreeHelper {
 
 	public static List<Node> getLeafs(Node root) {
-		List<Node> leafs = new ArrayList<Node>();
+		List<Node> leafs = new ArrayList<>();
 		Iterator<Node> it = new TreeIterator(root);
 		while (it.hasNext()) {
 			Node node = it.next();
@@ -35,7 +36,7 @@ public class TreeHelper {
 	}
 	
 	public static List<List<Object>> getLeafValues(Node root) {
-		List<List<Object>> leafValues = new ArrayList<List<Object>>();
+		List<List<Object>> leafValues = new ArrayList<>();
 		List<Node> leafs = getLeafs(root);
 		for (Node leaf : leafs) {
 			leafValues.add(leaf.getPathValues());
@@ -56,7 +57,7 @@ public class TreeHelper {
 	public static Node getChild(Node node, Object value) {
 		for (Node child : node.getChildren()) {
 			Object data = child.getData();
-			if (value == data || (value != null && value.equals(data))) {
+			if (Objects.equals(value, data)) {
 				return child;
 			}
 		}

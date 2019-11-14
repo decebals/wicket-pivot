@@ -108,7 +108,7 @@ public abstract class Aggregator implements Serializable {
 
         @Override
 		public Object getResult() {
-            return new Double(total);
+            return total;
         }
 
 		@Override
@@ -149,7 +149,7 @@ public abstract class Aggregator implements Serializable {
             	return null;
             }
             
-            return new Double(total / count);
+            return total / count;
         }
 
 		@Override
@@ -265,7 +265,7 @@ public abstract class Aggregator implements Serializable {
 
         @Override
 		public Object getResult() {
-            return new Integer(count);
+            return count;
         }
 
 		@Override

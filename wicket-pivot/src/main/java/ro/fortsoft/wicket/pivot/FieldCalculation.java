@@ -46,14 +46,15 @@ public abstract class FieldCalculation implements Serializable {
 	/**
 	 * Provide
 	 */
-	public static interface FieldValueProvider {
+	@FunctionalInterface
+	public interface FieldValueProvider {
 		/**
 		 * @param field
 		 *            can be null
 		 * 
 		 * @return the current value of the pivot field
 		 */
-		public abstract Object getFieldValue(PivotField field);
+		Object getFieldValue(PivotField field);
 	}
 
 	public abstract FieldCalculation init();

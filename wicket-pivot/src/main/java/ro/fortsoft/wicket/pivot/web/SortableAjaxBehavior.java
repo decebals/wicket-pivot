@@ -61,7 +61,7 @@ public abstract class SortableAjaxBehavior extends AbstractDefaultAjaxBehavior {
 		
 		@Override
 		public String toString() {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("Item[");
 			buffer.append("areaName = ").append(areaName);
 			buffer.append(" fieldIndex = ").append(fieldIndex);

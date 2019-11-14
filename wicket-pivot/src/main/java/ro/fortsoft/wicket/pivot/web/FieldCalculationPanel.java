@@ -12,9 +12,6 @@
  */
 package ro.fortsoft.wicket.pivot.web;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -25,10 +22,12 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-
 import ro.fortsoft.wicket.pivot.FieldCalculation;
 import ro.fortsoft.wicket.pivot.PivotField;
 import ro.fortsoft.wicket.pivot.PivotModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FieldCalculationPanel extends GenericPanel<PivotField> {
 	private final static class OnChangeAjaxBehaviorExtension extends OnChangeAjaxBehavior {
@@ -67,12 +66,12 @@ public class FieldCalculationPanel extends GenericPanel<PivotField> {
 			fieldA = fieldCalculation.getFieldA();
 			fieldB = fieldCalculation.getFieldB();
 		}
-		List<FieldCalculation> fieldCalculations = new ArrayList<FieldCalculation>();
+		List<FieldCalculation> fieldCalculations = new ArrayList<>();
 		for (String name : FieldCalculation.FUNCTIONS)
 			fieldCalculations.add(FieldCalculation.get(name));
 
-		final DropDownChoice<FieldCalculation> fieldCalculationDropDown = new DropDownChoice<FieldCalculation>(
-				"fieldCalcluation", new PropertyModel<FieldCalculation>(this, "fieldCalculation"), fieldCalculations,
+		final DropDownChoice<FieldCalculation> fieldCalculationDropDown = new DropDownChoice<>(
+				"fieldCalcluation", new PropertyModel<>(this, "fieldCalculation"), fieldCalculations,
 				new ChoiceRenderer<FieldCalculation>("function") {
 					private static final long serialVersionUID = 1L;
 
@@ -85,24 +84,24 @@ public class FieldCalculationPanel extends GenericPanel<PivotField> {
 		fieldCalculationDropDown.add(new OnChangeAjaxBehaviorExtension());
 		add(fieldCalculationDropDown);
 
-		List<PivotField> fields = new ArrayList<PivotField>();
+		List<PivotField> fields = new ArrayList<>();
 		for (PivotField field : pivotModel.getObject().getFields()) {
 			if (field.getAggregator() != null && field.getFieldCalculation() == null && field.isNumber())
 				fields.add(field);
 		}
-		final DropDownChoice<PivotField> fieldADropDown = new DropDownChoice<PivotField>("fieldA",
-				new PropertyModel<PivotField>(this, "fieldA"), fields, new PivotFieldChoiceRenderer());
+		final DropDownChoice<PivotField> fieldADropDown = new DropDownChoice<>("fieldA",
+				new PropertyModel<>(this, "fieldA"), fields, new PivotFieldChoiceRenderer());
 		fieldADropDown.setOutputMarkupId(true);
 		fieldADropDown.add(new OnChangeAjaxBehaviorExtension());
 		add(fieldADropDown);
 
-		final DropDownChoice<PivotField> fieldBDropDown = new DropDownChoice<PivotField>("fieldB",
-				new PropertyModel<PivotField>(this, "fieldB"), fields, new PivotFieldChoiceRenderer());
+		final DropDownChoice<PivotField> fieldBDropDown = new DropDownChoice<>("fieldB",
+				new PropertyModel<>(this, "fieldB"), fields, new PivotFieldChoiceRenderer());
 		fieldBDropDown.setOutputMarkupId(true);
 		fieldBDropDown.add(new OnChangeAjaxBehaviorExtension());
 		add(fieldBDropDown);
 
-		add(new TextField<String>("title", new PropertyModel<String>(this, "title"))
+		add(new TextField<>("title", new PropertyModel<>(this, "title"))
 				.add(new OnChangeAjaxBehaviorExtension()));
 
 		add(new AjaxLink<Void>("ok") {

@@ -12,18 +12,16 @@
  */
 package ro.fortsoft.wicket.pivot.demo;
 
+import com.google.gson.Gson;
+import org.apache.wicket.Session;
+import ro.fortsoft.wicket.pivot.config.IPivotConfigStorage;
+import ro.fortsoft.wicket.pivot.config.PivotConfig;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.wicket.Session;
-
-import com.google.gson.Gson;
-
-import ro.fortsoft.wicket.pivot.config.IPivotConfigStorage;
-import ro.fortsoft.wicket.pivot.config.PivotConfig;
 
 /**
  * Stores the configurations in the session. You usually want to store the
@@ -36,14 +34,14 @@ public class PivotConfigSessionStorage implements IPivotConfigStorage, Serializa
 	public List<String> listConfigNames() {
 		@SuppressWarnings("unchecked")
 		Map<String, String> map = getStorageMap();
-		return new ArrayList<String>(map.keySet());
+		return new ArrayList<>(map.keySet());
 	}
 
 	private Map<String, String> getStorageMap() {
 		@SuppressWarnings("unchecked")
 		HashMap<String, String> map = (HashMap<String, String>) Session.get().getAttribute("PivotConfigStorageSession");
 		if (map == null) {
-			map = new HashMap<String, String>();
+			map = new HashMap<>();
 			Session.get().setAttribute("PivotConfigStorageSession", map);
 		}
 		return map;

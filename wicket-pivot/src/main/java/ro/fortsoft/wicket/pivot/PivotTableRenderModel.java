@@ -167,13 +167,13 @@ public class PivotTableRenderModel implements Serializable {
 
 	public static class HeaderRenderRow extends RenderRow {
 		private static final long serialVersionUID = 1L;
-		private List<HeaderRenderCell> rowHeader = new ArrayList<HeaderRenderCell>();
-		private List<RenderCell> value = new ArrayList<RenderCell>();
-		private List<RenderCell> grandTotalColumn = new ArrayList<RenderCell>();
+		private List<HeaderRenderCell> rowHeader = new ArrayList<>();
+		private List<RenderCell> value = new ArrayList<>();
+		private List<RenderCell> grandTotalColumn = new ArrayList<>();
 
 		@Override
 		public List<RenderCell> getRenderCells() {
-			List<RenderCell> ret = new ArrayList<RenderCell>();
+			List<RenderCell> ret = new ArrayList<>();
 			ret.addAll(rowHeader);
 			ret.addAll(value);
 			ret.addAll(grandTotalColumn);
@@ -195,12 +195,12 @@ public class PivotTableRenderModel implements Serializable {
 
 	public static class DataRenderRow extends RenderRow {
 		private static final long serialVersionUID = 1L;
-		List<DataHeaderRenderCell> rowHeader = new ArrayList<DataHeaderRenderCell>();
-		List<RenderCell> value = new ArrayList<RenderCell>();
+		List<DataHeaderRenderCell> rowHeader = new ArrayList<>();
+		List<RenderCell> value = new ArrayList<>();
 
 		@Override
 		public List<RenderCell> getRenderCells() {
-			List<RenderCell> ret = new ArrayList<RenderCell>();
+			List<RenderCell> ret = new ArrayList<>();
 			ret.addAll(rowHeader);
 			ret.addAll(value);
 			return ret;
@@ -217,12 +217,12 @@ public class PivotTableRenderModel implements Serializable {
 
 	public static class GrandTotalRenderRow extends RenderRow {
 		private static final long serialVersionUID = 1L;
-		List<GrandTotalRowHeaderRenderCell> rowHeader = new ArrayList<GrandTotalRowHeaderRenderCell>();
-		List<GrandTotalValueRenderCell> value = new ArrayList<GrandTotalValueRenderCell>();
+		List<GrandTotalRowHeaderRenderCell> rowHeader = new ArrayList<>();
+		List<GrandTotalValueRenderCell> value = new ArrayList<>();
 
 		@Override
 		public List<RenderCell> getRenderCells() {
-			List<RenderCell> ret = new ArrayList<RenderCell>();
+			List<RenderCell> ret = new ArrayList<>();
 			ret.addAll(rowHeader);
 			ret.addAll(value);
 			return ret;
@@ -254,7 +254,7 @@ public class PivotTableRenderModel implements Serializable {
 	}
 
 	public List<RenderRow> getAllRenderRows() {
-		List<RenderRow> ret = new ArrayList<RenderRow>();
+		List<RenderRow> ret = new ArrayList<>();
 		ret.addAll(column);
 		ret.addAll(row);
 		ret.addAll(grandTotalRow);
@@ -268,10 +268,10 @@ public class PivotTableRenderModel implements Serializable {
 	}
 
 	private void calculate(PivotModel pivotModel) {
-		spanCache = new HashMap<List<Object>, Integer>();
-		column = new ArrayList<HeaderRenderRow>();
-		row = new ArrayList<DataRenderRow>();
-		grandTotalRow = new ArrayList<GrandTotalRenderRow>();
+		spanCache = new HashMap<>();
+		column = new ArrayList<>();
+		row = new ArrayList<>();
+		grandTotalRow = new ArrayList<>();
 
 		List<PivotField> columnFields = pivotModel.getFields(PivotField.Area.COLUMN);
 		List<PivotField> rowFields = pivotModel.getFields(PivotField.Area.ROW);
@@ -299,23 +299,23 @@ public class PivotTableRenderModel implements Serializable {
 			HeaderRenderRow tr = new HeaderRenderRow();
 			column.add(tr);
 
-			for (int j = 0; j < rowFieldsSize; j++) {
+			for (PivotField rowField : rowFields) {
 				if (i < headerRowCount - 1) {
 					// rendering empty cell
 					tr.rowHeader.add(new HeaderRenderCell(null));
 				} else {
 					// rendering row field
-					tr.rowHeader.add(new HeaderRenderCell(rowFields.get(j)));
+					tr.rowHeader.add(new HeaderRenderCell(rowField));
 				}
 			}
 
 			// rendering column keys
 			Node columnsRoot = pivotModel.getColumnsHeaderTree().getRoot();
-			List<List<Object>> pathRenderedCache = new ArrayList<List<Object>>();
+			List<List<Object>> pathRenderedCache = new ArrayList<>();
 			for (List<Object> columnKey : columnKeys) {
 				if (i < columnFieldsSize) {
 					PivotField columnField = columnFields.get(i);
-					List<Object> path = new ArrayList<Object>(columnKey.subList(0, i + 1));
+					List<Object> path = new ArrayList<>(columnKey.subList(0, i + 1));
 					int colspan = getSpan(columnsRoot, path);
 					colspan = colspan * dataFieldsSize;
 
@@ -359,13 +359,13 @@ public class PivotTableRenderModel implements Serializable {
 
 		// rendering rows
 		Node rowsRoot = pivotModel.getRowsHeaderTree().getRoot();
-		List<List<Object>> pathRenderedCache = new ArrayList<List<Object>>();
+		List<List<Object>> pathRenderedCache = new ArrayList<>();
 		for (List<Object> rowKey : rowKeys) {
 			DataRenderRow tr = new DataRenderRow();
 			row.add(tr);
 
 			for (int k = 0; k < rowKey.size(); k++) {
-				List<Object> path = new ArrayList<Object>(rowKey.subList(0, k + 1));
+				List<Object> path = new ArrayList<>(rowKey.subList(0, k + 1));
 				int rowspan = getSpan(rowsRoot, path);
 
 				PivotField rowField = rowFields.get(k);
@@ -389,7 +389,7 @@ public class PivotTableRenderModel implements Serializable {
 			}
 
 			if (!columnFields.isEmpty() && pivotModel.isShowGrandTotalForRow()) {
-				final MultiMap<PivotField, Object> values = new MultiMap<PivotField, Object>();
+				final MultiMap<PivotField, Object> values = new MultiMap<>();
 				for (List<Object> columnKey : columnKeys) {
 					for (PivotField dataField : dataFields) {
 						values.addValue(dataField, pivotModel.getValueAt(dataField, rowKey, columnKey));
@@ -422,9 +422,9 @@ public class PivotTableRenderModel implements Serializable {
 			tr.rowHeader.add(grandTotalCell);
 			grandTotalCell.colspan = rowFieldsSize;
 
-			final Map<PivotField, Double> grandTotal = new HashMap<PivotField, Double>();
+			final Map<PivotField, Double> grandTotal = new HashMap<>();
 			for (List<Object> columnKey : columnKeys) {
-				MultiMap<PivotField, Object> values = new MultiMap<PivotField, Object>();
+				MultiMap<PivotField, Object> values = new MultiMap<>();
 				for (List<Object> rowKey : rowKeys) {
 					for (PivotField dataField : dataFields) {
 						if( dataField.getFieldCalculation() == null)
@@ -460,15 +460,12 @@ public class PivotTableRenderModel implements Serializable {
 				for (PivotField dataField : dataFields) {
 					if (dataField.getFieldCalculation() != null) {
 						double grandTotalValue = PivotUtils.getSummary(dataField, Collections.emptyList(),
-								new FieldValueProvider() {
-									@Override
-									public Object getFieldValue(PivotField field) {
-										// If the field is not in the regular
-										// data, we can not return a sum of it
-										if (!grandTotal.containsKey(field))
-											return 0;
-										return grandTotal.get(field);
-									}
+								field -> {
+									// If the field is not in the regular
+									// data, we can not return a sum of it
+									if (!grandTotal.containsKey(field))
+										return 0;
+									return grandTotal.get(field);
 								}).doubleValue();
 
 						tr.value.add(new GrandTotalValueRenderCell(grandTotalValue, true));

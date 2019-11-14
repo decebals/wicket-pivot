@@ -158,7 +158,7 @@ public class PivotAreaPanel extends Panel {
 
         CharSequence script = sortableAjaxBehavior.getCallbackFunctionBody();
 
-        Map<String, String> vars = new HashMap<String, String>();
+        Map<String, String> vars = new HashMap<>();
         vars.put("component", get("fieldsContainer").getMarkupId());
         vars.put("stopBehavior", script.toString());
 

@@ -25,7 +25,7 @@ public class DefaultPivotFieldActionsFactory implements PivotFieldActionsFactory
 
 	@Override
 	public List<PivotFieldAction> createPivotFieldActions(PivotField field, PivotModel model) {
-		List<PivotFieldAction> fieldActions = new ArrayList<PivotFieldAction>();
+		List<PivotFieldAction> fieldActions = new ArrayList<>();
 
 		// fieldActions.add(new PivotFieldAction.Delete(field));
 		if (field.getArea().equals(PivotField.Area.DATA) && field.getAggregator() != null) {
