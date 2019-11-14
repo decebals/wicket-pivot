@@ -5,6 +5,8 @@ For more information what it's a pivot table see http://en.wikipedia.org/wiki/Pi
 
 Current build status: [![Build Status](https://buildhive.cloudbees.com/job/decebals/job/wicket-pivot/badge/icon)](https://buildhive.cloudbees.com/job/decebals/job/wicket-pivot/)
 
+![Image of Demo](wicket-pivot.png)
+
 Components
 -------------------
 - **PivotDataSource** is the data source for pivot table (pivot's fields). The data can be fetched from a sql ResultSet (see ResultSetPivotDataSource) 
