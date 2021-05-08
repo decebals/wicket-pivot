@@ -32,7 +32,7 @@
         
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <wicket.version>8.6.1</wicket.version>
+        <wicket.version>8.9.0</wicket.version>
     </properties>   
 
     <build>
